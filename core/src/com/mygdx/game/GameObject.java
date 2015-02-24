@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
 public class GameObject {
-    public static final int SPEED = 140;
+    public static final int SPEED = 70;
     protected float xSpeed;
     protected float ySpeed;
     protected Vector2 worldPosition;

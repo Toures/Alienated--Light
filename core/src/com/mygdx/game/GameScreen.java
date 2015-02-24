@@ -86,49 +86,35 @@ public class GameScreen implements Screen {
 		
 		//if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
 		
+		int speedFactor = 1;
+		
 		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && player.energy > 5) {
-			camera.translate(player.xSpeed*3*dt*player.SPEED, player.ySpeed*3*dt*player.SPEED);
-			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed*3) {
-				player.xSpeed += 0.05;
-			} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.xSpeed > -player.runspeed*3) {
-				player.xSpeed -= 0.05;
-			} else if(player.xSpeed < 0.15 && player.xSpeed > -0.15) {
-				player.xSpeed = 0;
-			} else {
-				player.xSpeed /= 1.3;
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < player.runspeed*3) {
-				player.ySpeed += 0.05;
-			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -player.runspeed*3) {
-				player.ySpeed -= 0.05;
-			} else if(player.ySpeed < 0.05 && player.ySpeed > -0.05) {
-				player.ySpeed = 0;
-			} else {
-				player.ySpeed /= 1.3;
-			}
-			
+			speedFactor = 2;
+			player.energy -= 20*dt;
+		} else
+			player.energy = Math.min(player.energy + 8*dt, 100);
+		
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed*speedFactor) {
+			player.xSpeed += 0.05;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.xSpeed > -player.runspeed*speedFactor) {
+			player.xSpeed -= 0.05;
+		} else if(player.xSpeed < 0.15 && player.xSpeed > -0.15) {
+			player.xSpeed = 0;
 		} else {
-			camera.translate(player.xSpeed*dt*player.SPEED, player.ySpeed*dt*player.SPEED);
-			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed) {
-				player.xSpeed += 0.05;
-			} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.xSpeed > -player.runspeed) {
-				player.xSpeed -= 0.05;
-			} else if(player.xSpeed < 0.15 && player.xSpeed > -0.15) {
-				player.xSpeed = 0;
-			} else {
-				player.xSpeed /= 1.3;
-			}
-			if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < player.runspeed) {
-				player.ySpeed += 0.05;
-			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -player.runspeed) {
-				player.ySpeed -= 0.05;
-			} else if(player.ySpeed < 0.05 && player.ySpeed > -0.05) {
-				player.ySpeed = 0;
-			} else {
-				player.ySpeed /= 1.3;
-			}
-			
+			player.xSpeed /= 1.3;
 		}
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < player.runspeed*speedFactor) {
+			player.ySpeed += 0.05;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -player.runspeed*speedFactor) {
+			player.ySpeed -= 0.05;
+		} else if(player.ySpeed < 0.05 && player.ySpeed > -0.05) {
+			player.ySpeed = 0;
+		} else {
+			player.ySpeed /= 1.3;
+		}
+		
+		camera.translate(player.xSpeed*speedFactor*dt*player.SPEED, player.ySpeed*speedFactor*dt*player.SPEED);
+			
 
 		player.update(dt);
 		camera.update();
@@ -177,9 +163,15 @@ public class GameScreen implements Screen {
 		batch.begin();
 		
 		int rotation = (int)new Vector2(player.xSpeed,player.ySpeed).angle();
+		font.draw(batch, "Rotation: " + rotation, 20, 80);
+		font.draw(batch, "Health: " + player.health, 20, 60);
+		font.draw(batch, "Energy: " + (int) player.energy, 20, 40);
+		if(rotation == 0 && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+			rotation = player.rotation;
+		else
+			player.rotation = rotation;
 		player.draw(batch, rotation);
 		
-		font.draw(batch, "Alienated: Light", 10, 20);
 		batch.end();
 	}
 
