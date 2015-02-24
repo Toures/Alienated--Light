@@ -27,6 +27,8 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.graphics.glutils.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class GameScreen implements Screen {
 	private static final String SOLID = "Solid";
@@ -65,6 +67,7 @@ public class GameScreen implements Screen {
 		camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
         camera.update();
+        
         tiledMap = new TmxMapLoader().load("Map2.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         ground = tiledMap.getLayers().get(0);
@@ -160,12 +163,28 @@ public class GameScreen implements Screen {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         
+        drawBars();
+		
+		ShapeRenderer energyBar = new ShapeRenderer();
+		energyBar.begin(ShapeType.Filled);
+		energyBar.setColor(0.0f, 0.5f, 1f, 0f);
+		energyBar.rect(18, 20, 104, 22);
+		energyBar.end();
+		
+		energyBar = new ShapeRenderer();
+		energyBar.begin(ShapeType.Filled);
+		energyBar.setColor(0.5f, 1f, 1f, 0f);
+		energyBar.rect(20, 22, (int) player.energy, 18);
+		energyBar.end();
+        
 		batch.begin();
 		
 		int rotation = (int)new Vector2(player.xSpeed,player.ySpeed).angle();
-		font.draw(batch, "Rotation: " + rotation, 20, 80);
-		font.draw(batch, "Health: " + player.health, 20, 60);
-		font.draw(batch, "Energy: " + (int) player.energy, 20, 40);
+		
+		//Interface
+//		font.draw(batch, "Rotation: " + rotation, 20, 80);
+//		font.draw(batch, "Health: " + player.health, 20, 60);
+//		font.draw(batch, "Energy: " + (int) player.energy, 20, 40);
 		if(rotation == 0 && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))
 			rotation = player.rotation;
 		else
@@ -173,6 +192,32 @@ public class GameScreen implements Screen {
 		player.draw(batch, rotation);
 		
 		batch.end();
+	}
+	
+	private void drawBars() {
+		ShapeRenderer energyBar = new ShapeRenderer();
+		energyBar.begin(ShapeType.Filled);
+		energyBar.setColor(0.0f, 0.5f, 1f, 0f);
+		energyBar.rect(18, 20, 104, 22);
+		energyBar.end();
+		
+		energyBar = new ShapeRenderer();
+		energyBar.begin(ShapeType.Filled);
+		energyBar.setColor(0.5f, 1f, 1f, 0f);
+		energyBar.rect(20, 22, (int) player.energy, 18);
+		energyBar.end();
+		
+		ShapeRenderer healthBar = new ShapeRenderer();
+		healthBar.begin(ShapeType.Filled);
+		healthBar.setColor(0.6f, 0f, 0f, 0f);
+		healthBar.rect(18, 45, 104, 22);
+		healthBar.end();
+		
+		healthBar = new ShapeRenderer();
+		healthBar.begin(ShapeType.Filled);
+		healthBar.setColor(1f, 0f, 0f, 0f);
+		healthBar.rect(20, 47, (int) player.health, 18);
+		healthBar.end();
 	}
 
 	@Override
