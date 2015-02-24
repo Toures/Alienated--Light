@@ -25,11 +25,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class GameScreen implements Screen {
 	private static final String SOLID = "Solid";
 	public static final int TILESIZE = 32;
-	public static final int MAPHEIGHT = 15;
     private Game parent;
     private SpriteBatch batch;
 	private BitmapFont font;
@@ -64,7 +65,7 @@ public class GameScreen implements Screen {
 		camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
         camera.update();
-        tiledMap = new TmxMapLoader().load("Map.tmx");
+        tiledMap = new TmxMapLoader().load("Map2.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         ground = tiledMap.getLayers().get(0);
 		player = new Player(this);
@@ -84,39 +85,53 @@ public class GameScreen implements Screen {
 	private void update(float dt) {
 		
 		//if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-			
-		float oldySpeed = player.ySpeed;
-		player.ySpeed 0 0;
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < 0.5) {
-			player.xSpeed += 0.05;
-		} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.xSpeed > -0.5) {
-			player.xSpeed -= 0.05;
-		} else if(player.xSpeed < 0.15 && player.xSpeed > -0.15) {
-			player.xSpeed = 0;
-		} else {
-			player.xSpeed /= 1.3;
-		}
-		Circle newHitbox = player.calculateHitbox(player.calculateNewWorldPosition(dt));
-		int tileNumber = 0;
-		for(MapObject obj : ground.getObjects()){
-			if ((Integer)obj.getProperties().get(SOLID)==1){
-				if()
-			}
-			tileNumber++;
-		}
 		
-		player.ySpeed=oldySpeed;
-		if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < 0.5) {
-			player.ySpeed += 0.05;
-		} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -0.5) {
-			player.ySpeed -= 0.05;
-		} else if(player.ySpeed < 0.05 && player.ySpeed > -0.05) {
-			player.ySpeed = 0;
+		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && player.energy > 5) {
+			camera.translate(player.xSpeed*3*dt*player.SPEED, player.ySpeed*3*dt*player.SPEED);
+			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed*3) {
+				player.xSpeed += 0.05;
+			} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.xSpeed > -player.runspeed*3) {
+				player.xSpeed -= 0.05;
+			} else if(player.xSpeed < 0.15 && player.xSpeed > -0.15) {
+				player.xSpeed = 0;
+			} else {
+				player.xSpeed /= 1.3;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < player.runspeed*3) {
+				player.ySpeed += 0.05;
+			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -player.runspeed*3) {
+				player.ySpeed -= 0.05;
+			} else if(player.ySpeed < 0.05 && player.ySpeed > -0.05) {
+				player.ySpeed = 0;
+			} else {
+				player.ySpeed /= 1.3;
+			}
+			
 		} else {
-			player.ySpeed /= 1.3;
+			camera.translate(player.xSpeed*dt*player.SPEED, player.ySpeed*dt*player.SPEED);
+			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed) {
+				player.xSpeed += 0.05;
+			} else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.xSpeed > -player.runspeed) {
+				player.xSpeed -= 0.05;
+			} else if(player.xSpeed < 0.15 && player.xSpeed > -0.15) {
+				player.xSpeed = 0;
+			} else {
+				player.xSpeed /= 1.3;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < player.runspeed) {
+				player.ySpeed += 0.05;
+			} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -player.runspeed) {
+				player.ySpeed -= 0.05;
+			} else if(player.ySpeed < 0.05 && player.ySpeed > -0.05) {
+				player.ySpeed = 0;
+			} else {
+				player.ySpeed /= 1.3;
+			}
+			
 		}
 
 		player.update(dt);
+		camera.update();
 		
 		
 //        if(randGenerator.nextInt(100) < 40){
@@ -160,15 +175,11 @@ public class GameScreen implements Screen {
         tiledMapRenderer.render();
         
 		batch.begin();
-		player.draw(batch, 90);
-		for (Meteor meteor : meteors) {
-			meteor.draw(batch);
-		}
-		for (MeteorAnimation meteorAnimation : anim) {
-			meteorAnimation.draw(batch);
-		}
 		
-		font.draw(batch, "Meteorstorm", 10, 20);
+		int rotation = (int)new Vector2(player.xSpeed,player.ySpeed).angle();
+		player.draw(batch, rotation);
+		
+		font.draw(batch, "Alienated: Light", 10, 20);
 		batch.end();
 	}
 

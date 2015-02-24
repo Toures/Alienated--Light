@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 public class MyMap extends TiledMap{
 
 	public static final int TILESIZE = 32;
-	public static final int MAPHEIGHT = 15;
-	public static final int MAPWIDTH = 20;
+	public static final int MAPHEIGHT = 40;
+	public static final int MAPWIDTH = 50;
 
 	public int getTilePostion(Vector2 worldPosition){
 		return MAPWIDTH*(int)(worldPosition.y/TILESIZE)*(int)(worldPosition.x/TILESIZE);

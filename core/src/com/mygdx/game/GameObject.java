@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
 public class GameObject {
-    public static final int SPEED = 200;
+    public static final int SPEED = 140;
     protected float xSpeed;
     protected float ySpeed;
     protected Vector2 worldPosition;
@@ -40,7 +40,7 @@ public class GameObject {
     public void draw(SpriteBatch batch, int rotation) {
 
         //batch.draw(texture,position.x, position.y,texture.getWidth()*scale,texture.getHeight()*scale);
-        batch.draw(texture, worldPosition.x, worldPosition.y, 0, 0, texture.getWidth(), texture.getHeight(), scale, scale, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+        batch.draw(texture, worldPosition.x, worldPosition.y, getWidth()/2, getHeight()/2, texture.getWidth(), texture.getHeight(), scale, scale, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
     }
     
     public void draw(SpriteBatch batch) {
@@ -51,7 +51,7 @@ public class GameObject {
     public void draw(SpriteBatch batch, int rotation, boolean flipX, boolean flipY) {
 
         //batch.draw(texture,position.x, position.y,texture.getWidth()*scale,texture.getHeight()*scale);
-        batch.draw(texture, worldPosition.x, worldPosition.y, 0, 0, texture.getWidth(), texture.getHeight(), scale, scale, rotation, 0, 0, texture.getWidth(), texture.getHeight(), flipX, flipY);
+        batch.draw(texture, worldPosition.x, worldPosition.y, getWidth()/2, getHeight()/2, texture.getWidth(), texture.getHeight(), scale, scale, rotation, 0, 0, texture.getWidth(), texture.getHeight(), flipX, flipY);
     }
     
     public void update(float dt) {
