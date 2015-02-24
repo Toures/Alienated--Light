@@ -19,10 +19,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
@@ -43,7 +42,7 @@ public class GameScreen implements Screen {
 	private List<MeteorAnimation> anim = new ArrayList<MeteorAnimation>();
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
 	private Texture img;
-    private TiledMap tiledMap;
+    private MyMap tiledMap;
     private MapLayer ground;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
@@ -67,10 +66,9 @@ public class GameScreen implements Screen {
 		camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
         camera.update();
-        
-        tiledMap = new TmxMapLoader().load("Map2.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        ground = tiledMap.getLayers().get(0);
+        tiledMap =new MyMap("Map2.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
+        ground = tiledMap.map.getLayers().get(0);
 		player = new Player(this);
 		
 		
@@ -90,12 +88,13 @@ public class GameScreen implements Screen {
 		//if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
 		
 		int speedFactor = 1;
-		
+		float oldy= player.ySpeed;
+        player.ySpeed=0;
 		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && player.energy > 5) {
 			speedFactor = 2;
-			player.energy -= 20*dt;
+			player.energy -= 20;
 		} else
-			player.energy = Math.min(player.energy + 8*dt, 100);
+			player.energy = Math.min(player.energy + 8, 100);
 		
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed*speedFactor) {
 			player.xSpeed += 0.05;
@@ -106,6 +105,23 @@ public class GameScreen implements Screen {
 		} else {
 			player.xSpeed /= 1.3;
 		}
+
+        for (int i = 0; i < MyMap.MAPWIDTH; i++) {
+            for (int j = 0; j < MyMap.MAPHEIGHT ; j++) {
+
+
+                TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
+                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
+                    if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
+                       player.xSpeed = 0;
+                    }
+                }
+
+            }
+        }
+
+        player.ySpeed=oldy;
 		if (Gdx.input.isKeyPressed(Input.Keys.UP) && player.ySpeed < player.runspeed*speedFactor) {
 			player.ySpeed += 0.05;
 		} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.ySpeed > -player.runspeed*speedFactor) {
@@ -115,6 +131,20 @@ public class GameScreen implements Screen {
 		} else {
 			player.ySpeed /= 1.3;
 		}
+        for (int i = 0; i < MyMap.MAPWIDTH; i++) {
+            for (int j = 0; j < MyMap.MAPHEIGHT ; j++) {
+
+
+                TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
+                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
+                    if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
+                        player.ySpeed = 0;
+                    }
+                }
+
+            }
+        }
 		
 		camera.translate(player.xSpeed*speedFactor*dt*player.SPEED, player.ySpeed*speedFactor*dt*player.SPEED);
 			
@@ -270,9 +300,9 @@ public class GameScreen implements Screen {
         if(keycode == Input.Keys.DOWN)
             camera.translate(0,32);
         if(keycode == Input.Keys.NUM_1)
-            tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
+            tiledMap.map.getLayers().get(0).setVisible(!tiledMap.map.getLayers().get(0).isVisible());
         if(keycode == Input.Keys.NUM_2)
-            tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+            tiledMap.map.getLayers().get(1).setVisible(!tiledMap.map.getLayers().get(1).isVisible());
         return false;
     }
 }
