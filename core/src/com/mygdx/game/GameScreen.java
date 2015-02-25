@@ -115,24 +115,8 @@ public class GameScreen implements Screen {
 		}
 
 		//CollisionDetection Player x-Axis
-		for (int i = Math.max(0,(int)(player.worldPosition.x/32)-1); 
-        		i <= Math.min((int)(player.worldPosition.x/32)+1, MyMap.MAPWIDTH); 
-        		i++) {
-            for (int j = Math.max(0,(int)(player.worldPosition.y/32)-1);
-            		j <= Math.min((int)(player.worldPosition.y/32)+1, MyMap.MAPWIDTH);
-            		j++) {
-
-                TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
-                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
-                if(cell.getTile().getProperties().get("SOLID") != null) {
-                	if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
-                		if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
-                			player.xSpeed = 0;
-                		}
-                	}
-                }
-
-            }
+        if(wallColission(dt)) {
+            player.xSpeed = 0;
         }
 
 		//Controls y-Axis
@@ -148,24 +132,8 @@ public class GameScreen implements Screen {
 		}
 		
 		//CollisionDetection Player y-Axis
-        for (int i = Math.max(0,(int)(player.worldPosition.x/32)-1); 
-        		i <= Math.min((int)(player.worldPosition.x/32)+1, MyMap.MAPWIDTH); 
-        		i++) {
-            for (int j = Math.max(0,(int)(player.worldPosition.y/32)-1);
-            		j <= Math.min((int)(player.worldPosition.y/32)+1, MyMap.MAPWIDTH);
-            		j++) {
-
-                TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
-                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
-                if(cell.getTile().getProperties().get("SOLID") != null) {
-                	if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
-                		if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
-                			player.ySpeed = 0;
-                		}
-                	}
-                }
-
-            }
+        if(wallColission(dt)) {
+            player.ySpeed = 0;
         }
 		
         //Update camera and everything else
@@ -205,6 +173,29 @@ public class GameScreen implements Screen {
 //			}
 //		}
 
+	}
+
+    private boolean wallColission(float dt){
+        for (int i = Math.max(0,(int)(player.worldPosition.x/32)-1);
+             i <= Math.min((int)(player.worldPosition.x/32)+1, MyMap.MAPWIDTH);
+             i++) {
+            for (int j = Math.max(0,(int)(player.worldPosition.y/32)-1);
+                 j <= Math.min((int)(player.worldPosition.y/32)+1, MyMap.MAPWIDTH);
+                 j++) {
+
+                TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
+                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                if(cell.getTile().getProperties().get("SOLID") != null) {
+                    if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
+                        if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
+                           return true;
+                        }
+                    }
+                }
+
+            }
+        }
+        return false;
 	}
 
 	private void draw() {
