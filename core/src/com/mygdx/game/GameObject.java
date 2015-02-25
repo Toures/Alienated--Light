@@ -66,7 +66,8 @@ public class GameObject {
     public Vector2 calculateNewWorldPosition(float dt){
     	
     	 Vector2 move = new Vector2(xSpeed*SPEED*dt,ySpeed*SPEED*dt);
-         return worldPosition.add(move);
+        Vector2 newPosition = new Vector2(worldPosition);
+         return newPosition.add(move);
     }
 
 }
