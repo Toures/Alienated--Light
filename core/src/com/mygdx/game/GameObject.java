@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
 public class GameObject {
-    public static final int SPEED = 70;
+    public static final int SPEED = 140;
     protected float xSpeed;
     protected float ySpeed;
     protected Vector2 worldPosition;
@@ -53,20 +53,18 @@ public class GameObject {
     }
     
     public void update(float dt) {
-
-    	//xSpeed = xSpeed - (float)(Math.sqrt((xSpeed + ySpeed)));
     	worldPosition = calculateNewWorldPosition(dt);
         hitbox.setPosition(worldPosition);
     }
     
     public Circle calculateHitbox(Vector2 newWorldPosition){
-         return new Circle(newWorldPosition, getHeight()/2);
+         return new Circle(newWorldPosition.add(getWidth()/2, getHeight()/2), getHeight()/2-4);
     }
     
     public Vector2 calculateNewWorldPosition(float dt){
     	
     	 Vector2 move = new Vector2(xSpeed*SPEED*dt,ySpeed*SPEED*dt);
-        Vector2 newPosition = new Vector2(worldPosition);
+    	 Vector2 newPosition = new Vector2(worldPosition);
          return newPosition.add(move);
     }
 

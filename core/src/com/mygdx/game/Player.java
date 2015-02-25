@@ -11,6 +11,6 @@ public class Player extends GameObject{
 	protected int health = 100;
 	
 	public Player(GameScreen screen) {
-        super(screen, "ego-01.png", new Vector2(100f,100f));
+        super(screen, "ego-01.png", new Vector2(64f,64f));
 	}
 }

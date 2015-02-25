@@ -9,8 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 public class MyMap {
     public TiledMap map;
 	public static final int TILESIZE = 32;
-	public static final int MAPHEIGHT = 40;
-	public static final int MAPWIDTH = 50;
+	public static final int MAPHEIGHT = 30;
+	public static final int MAPWIDTH = 40;
 
     public MyMap(String file){
         map =new TmxMapLoader().load(file);
