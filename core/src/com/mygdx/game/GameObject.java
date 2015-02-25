@@ -39,7 +39,6 @@ public class GameObject {
 
     public void draw(SpriteBatch batch, int rotation) {
 
-        //batch.draw(texture,position.x, position.y,texture.getWidth()*scale,texture.getHeight()*scale);
         batch.draw(texture, worldPosition.x, worldPosition.y, getWidth()/2, getHeight()/2, texture.getWidth(), texture.getHeight(), scale, scale, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
     }
     
@@ -50,7 +49,6 @@ public class GameObject {
     
     public void draw(SpriteBatch batch, int rotation, boolean flipX, boolean flipY) {
 
-        //batch.draw(texture,position.x, position.y,texture.getWidth()*scale,texture.getHeight()*scale);
         batch.draw(texture, worldPosition.x, worldPosition.y, getWidth()/2, getHeight()/2, texture.getWidth(), texture.getHeight(), scale, scale, rotation, 0, 0, texture.getWidth(), texture.getHeight(), flipX, flipY);
     }
     

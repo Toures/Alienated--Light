@@ -91,7 +91,12 @@ public class GameScreen implements Screen {
 		
 		int speedFactor = 1;
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && player.energy > 5) {
+		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && 
+			(	Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
+				Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
+				Gdx.input.isKeyPressed(Input.Keys.UP) ||
+				Gdx.input.isKeyPressed(Input.Keys.DOWN)) &&
+				player.energy > 5) {
 			speedFactor = 2;
 			player.energy -= 20*dt;
 		} else
@@ -116,7 +121,7 @@ public class GameScreen implements Screen {
 			player.ySpeed /= 1.3;
 		}
 		
-		camera.translate(player.xSpeed*speedFactor*dt*player.SPEED, player.ySpeed*speedFactor*dt*player.SPEED);
+		camera.position.set(player.worldPosition, camera.position.z);
 			
 
 		player.update(dt);
@@ -164,18 +169,6 @@ public class GameScreen implements Screen {
         tiledMapRenderer.render();
         
         drawBars();
-		
-		ShapeRenderer energyBar = new ShapeRenderer();
-		energyBar.begin(ShapeType.Filled);
-		energyBar.setColor(0.0f, 0.5f, 1f, 0f);
-		energyBar.rect(18, 20, 104, 22);
-		energyBar.end();
-		
-		energyBar = new ShapeRenderer();
-		energyBar.begin(ShapeType.Filled);
-		energyBar.setColor(0.5f, 1f, 1f, 0f);
-		energyBar.rect(20, 22, (int) player.energy, 18);
-		energyBar.end();
         
 		batch.begin();
 		
