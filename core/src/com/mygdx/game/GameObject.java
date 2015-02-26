@@ -65,6 +65,9 @@ public class GameObject {
     }
     
 	public boolean wallCollision(float dt){
+        boolean isSolid;
+        boolean isDoor;
+        boolean isOpen=false;
         for (int i = Math.max(0,(int)(worldPosition.x/32)-1);
              i <= Math.min((int)(worldPosition.x/32)+1, MyMap.MAPWIDTH);
              i++) {
@@ -74,11 +77,19 @@ public class GameObject {
 
                 TiledMapTileLayer layer =(TiledMapTileLayer)screen.tiledMap.map.getLayers().get(0);
                 TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                isSolid=false;
                 if(cell.getTile().getProperties().get("SOLID") != null) {
-                    if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
-                        if(Intersector.overlaps(calculateHitbox(calculateNewWorldPosition(dt)),screen.tiledMap.getRectTile(i,j))) {
-                           return true;
-                        }
+                    isSolid = ((String) cell.getTile().getProperties().get("SOLID")).equals("1");
+                }
+                if(screen.tiledMap.isDoor(i,j)) {
+                    isDoor = true;
+                    isOpen = screen.tiledMap.getDoor(i,j);
+                }else {
+                    isDoor=false;
+                }
+                if(isSolid || (isDoor && !isOpen)) {
+                    if (Intersector.overlaps(calculateHitbox(calculateNewWorldPosition(dt)), screen.tiledMap.getRectTile(i, j))) {
+                        return true;
                     }
                 }
 

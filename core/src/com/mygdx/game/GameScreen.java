@@ -179,37 +179,7 @@ public class GameScreen implements Screen {
 			creep.update(dt);
 		}
 		camera.update();
-		
-		
-//        if(randGenerator.nextInt(100) < 40){
-//			meteors.add(new Meteor(this));
-//		}
-//
-//		for (Meteor meteor : meteors) {
-//			meteor.update(dt);
-//		}
-//		for (int i = meteors.size()-1; i >= 0; i--) {
-//			if(meteors.get(i).position.x<0){
-//				meteors.remove(i);
-//			}
-//		}
-//		for (int i = meteors.size()-1; i >= 0; i--) {
-//			if(meteors.get(i).isColliding(player.position.x, player.position.y, player.getWidth(), player.getHeight())){
-//				anim.add(new MeteorAnimation(meteors.get(i).position.x, meteors.get(i).position.y, meteors.get(i).scale));
-//				meteors.remove(i);
-//				crash.play();
-//				
-//			}
-//		}
-//		for (MeteorAnimation meteorAnimation : anim) {
-//			meteorAnimation.update(dt);
-//		}
-//		for (int i = anim.size()-1; i >= 0; i--) {
-//			if(!anim.get(i).isRunnung()){
-//				anim.remove(i);
-//				
-//			}
-//		}
+
 
 	}
 
