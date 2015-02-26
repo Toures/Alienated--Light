@@ -38,12 +38,12 @@ public class Creep extends NPC {
 			}
 			else
 				attackCooldown = Math.max(0, attackCooldown-dt);
-			huntingRange = huntingRange - dt*3;
+			huntingRange = huntingRange - dt*8;
 		}
 		else {
 			moveTo(currentWaypoint,dt);
 			speedFactor = 0.6f;
-			huntingRange = Math.min(huntingRange + dt*3, 100);
+			huntingRange = Math.min(huntingRange + dt*8, 100);
 			huntingMode = false;
 		}
 		

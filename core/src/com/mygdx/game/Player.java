@@ -12,6 +12,7 @@ public class Player extends GameObject{
 	protected int health = 100;
 	public boolean alive = true;
 	protected int lightpacks = 3;
+	protected float lightpacksCooldown = 0;
 	
 	public Player(GameScreen screen) {
         super(screen, "ego-01.png", new Vector2(64f,64f));
