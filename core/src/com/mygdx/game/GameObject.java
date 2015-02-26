@@ -83,7 +83,7 @@ public class GameObject {
                 }
                 if(screen.tiledMap.isDoor(i,j)) {
                     isDoor = true;
-                    isOpen = screen.tiledMap.getDoor(i,j);
+                    isOpen = screen.tiledMap.getDoor(i,j).open;
                 }else {
                     isDoor=false;
                 }

@@ -1,8 +1,6 @@
 package com.mygdx.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
@@ -37,6 +35,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 public class GameScreen implements Screen {
 	private static final String SOLID = "Solid";
 	public static final int TILESIZE = 32;
+    private static final int DOOR_COOLDOWN = 1;
     private Game parent;
     private SpriteBatch batch;
     private SpriteBatch fow;
@@ -56,6 +55,7 @@ public class GameScreen implements Screen {
     private TiledMapRenderer tiledMapRenderer;
     private boolean paused;
     boolean dPressed=false;
+    private  float doorTimer = DOOR_COOLDOWN;
 	
 	public float getH() {
 		return h;
@@ -118,6 +118,8 @@ public class GameScreen implements Screen {
 
 	private void update(float dt) {
 		
+		doorTimer+=dt;
+
 		//TODO if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
 		
 		/* ------------------ */
@@ -170,9 +172,15 @@ public class GameScreen implements Screen {
         if(player.wallCollision(dt))
         	player.ySpeed = 0;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed) {
-           tiledMap.setDoor(8,13,!tiledMap.getDoor(8,13));
+        if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed&&doorTimer>DOOR_COOLDOWN) {
+            Iterator it = tiledMap.doors.values().iterator();
+
+            for (Vector2 key : tiledMap.doors.keySet())
+            {
+                tiledMap.setDoor((int)key.x,(int)key.y,!tiledMap.getDoor((int)key.x,(int)key.y).open);
+            }
             dPressed=true;
+            doorTimer=0;
         }else{
             dPressed=false;
         }
@@ -277,6 +285,10 @@ public class GameScreen implements Screen {
 		healthBar.end();
 		healthBar.dispose();
 		
+		batch.begin();
+		font.draw(batch, "" + creeps.get(0).isPlayerNear(100), 100, 100);
+		font.draw(batch, "" + creeps.get(0).path.get(0), 100, 80);
+		batch.end();
 		fow.begin();
 		font.draw(fow, "Lightpacks: " + player.lightpacks +"/5", 20, 85);
 		font.draw(fow, ""+lightpacks.get(0).consumed, 20, 120);

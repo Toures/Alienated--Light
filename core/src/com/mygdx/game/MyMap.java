@@ -21,7 +21,7 @@ public class MyMap {
 	public static final int MAPWIDTH = 40;
 
     TiledMapTileLayer groudLayer;
-    public Map<Vector2,Boolean> doors = new HashMap<Vector2,Boolean>();
+    public Map<Vector2,Door> doors = new HashMap<Vector2,Door>();
 
     public MyMap(String file){
         map =new TmxMapLoader().load(file);
@@ -31,7 +31,8 @@ public class MyMap {
             for (int j = 0; j < MAPHEIGHT; j++) {
                 TiledMapTileLayer.Cell cell = groudLayer.getCell(i, j);
                 if(cell.getTile().getProperties().get("DOOR")!=null) {
-                    doors.put(new Vector2(i,j),((String) cell.getTile().getProperties().get("OPEN")).equals("1"));
+                    doors.put(new Vector2(i,j),new Door(((String) cell.getTile().getProperties().get("OPEN")).equals("1"),
+                            Integer.parseInt((String)cell.getTile().getProperties().get("DIRECTION"))));
                 }
 
             }
@@ -52,13 +53,29 @@ public class MyMap {
 
     public void setDoor(int x, int y,boolean value){
         TiledMapTileLayer.Cell cell = groudLayer.getCell(x, y);
-        cell.setTile(new StaticTiledMapTile(new TextureRegion(new Texture(Gdx.files.internal("tiles/Floor/door-01"+(value?"":"-closed")+".png")))));
-        doors.put(new Vector2(x,y),value);
+        String opened=(!value?"closed":"opend");
+        String direction="";
+        switch (getDoor(x,y).direction){
+            case 1:
+               direction="horizontal_left";
+                break;
+            case 2:
+                direction="horizontal_right";
+                break;
+            case 3:
+                direction="vertikal_down";
+                break;
+            case 4:
+                direction="vertikal_up";
+                break;
+        }
+        cell.setTile(new StaticTiledMapTile(new TextureRegion(new Texture(Gdx.files.internal("door/door_"+opened+"_"+direction+"-01.png")))));
+        getDoor(x,y).open=value;
     }
-    public boolean getDoor(int x, int y){
+    public Door getDoor(int x, int y){
         return doors.get(new Vector2(x,y));
     }
     public boolean isDoor(int x, int y){
-        return doors.containsKey(new Vector2(x,y));
+        return doors.containsKey(new Vector2(x, y));
     }
 }
