@@ -56,6 +56,7 @@ public class GameScreen implements Screen {
     private boolean paused;
     boolean dPressed=false;
     private  float doorTimer = DOOR_COOLDOWN;
+    private Sound music;
 	
 	public float getH() {
 		return h;
@@ -80,7 +81,7 @@ public class GameScreen implements Screen {
         tiledMap =new MyMap("Map3.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
 		player = new Player(this);
-		
+
 		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
 		creeps.get(0).path.add(new Vector2(25*32,13*32));
 		creeps.get(0).path.add(new Vector2(13*32,13*32));
@@ -290,7 +291,7 @@ public class GameScreen implements Screen {
 		font.draw(batch, "" + creeps.get(0).path.get(0), 100, 80);
 		batch.end();
 		fow.begin();
-		font.draw(fow, "Lightpacks: " + player.lightpacks +"/5", 20, 85);
+		font.draw(fow, "Lightpacks: " + player.lightpacks + "/5", 20, 85);
 		font.draw(fow, ""+lightpacks.get(0).consumed, 20, 120);
 		fow.end();
 	}
@@ -303,13 +304,14 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
+        music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
+        music.loop();
 
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
+		music.stop();
 
 	}
 
