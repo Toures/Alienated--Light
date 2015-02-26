@@ -6,14 +6,14 @@ public class Lightpack extends GameObject {
 
 	public boolean consumed = false;
 	
-	public Lightpack(GameScreen screen, String textur, Vector2 position) {
-		super(screen, textur, position);
-		// TODO Auto-generated constructor stub
+	public Lightpack(GameScreen screen, Vector2 position) {
+		super(screen, "glowstick/glowstickbox-01.png", position);
+		scale = 1.5f;
 	}
 	
 	public void update(float dt) {
 		if( 20 > screen.player.worldPosition.dst(worldPosition) && !consumed && screen.player.lightpacks < 5) {
-			screen.player.lightpacks = Math.min(5, screen.player.lightpacks);
+			screen.player.lightpacks = Math.min(5, screen.player.lightpacks+3);
 			consumed = true;
 		}
 	}

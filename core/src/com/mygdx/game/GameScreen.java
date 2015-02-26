@@ -47,6 +47,8 @@ public class GameScreen implements Screen {
 	private float w;
 	private float h;
 	private List<Creep> creeps = new ArrayList<Creep>();
+	private List<Healthpack> healthpacks = new ArrayList<Healthpack>();
+	private List<Lightpack> lightpacks = new ArrayList<Lightpack>();
 	private List<MeteorAnimation> anim = new ArrayList<MeteorAnimation>();
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
     protected MyMap tiledMap;
@@ -78,10 +80,14 @@ public class GameScreen implements Screen {
         tiledMap =new MyMap("Map3.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
 		player = new Player(this);
-		//npc = new NPC(this);
+		
 		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
 		creeps.get(0).path.add(new Vector2(25*32,13*32));
 		creeps.get(0).path.add(new Vector2(13*32,13*32));
+		
+		//Consumables
+		healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
+		lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
 		
 		Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
         pixmap.setBlending(Blending.None);
@@ -117,6 +123,11 @@ public class GameScreen implements Screen {
 		/* ------------------ */
 		/* ----- Player ----- */
 		/* ------------------ */
+		
+		//Drop Lightpack
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.lightpacks > 0) {
+			
+		}
 		
 		//Sprinting
 		int speedFactor = 1;
@@ -174,9 +185,14 @@ public class GameScreen implements Screen {
         //Update camera and everything else
 		camera.position.set(player.worldPosition, camera.position.z);
 		player.update(dt);
-		//npc.update(dt);
 		for(Creep creep : creeps) {
 			creep.update(dt);
+		}
+		for(Healthpack healthpack : healthpacks) {
+			healthpack.update(dt);
+		}
+		for(Lightpack lightpack : lightpacks) {
+			lightpack.update(dt);
 		}
 		camera.update();
 
@@ -197,17 +213,28 @@ public class GameScreen implements Screen {
         //Objects
 		batch.begin();
 		batch.setProjectionMatrix(camera.combined);
-		//Player
-		int rotation = (int)new Vector2(player.xSpeed,player.ySpeed).angle();
-		if(rotation == 0 && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-			rotation = player.rotation;
-		else
-			player.rotation = rotation;
-		player.draw(batch, rotation);
-		//npc.draw(batch);
+		
+		//Creeps and Consumables
 		for(Creep creep : creeps) {
 			creep.draw(batch,creep.getRotation());
 		}
+		for(Healthpack healthpack : healthpacks) {
+			if(!healthpack.consumed)
+				healthpack.draw(batch);
+		}
+		for(Lightpack lightpack : lightpacks) {
+			if(!lightpack.consumed)
+				lightpack.draw(batch);
+		}
+		
+		//Player
+		int rotation = (int)new Vector2(player.xSpeed,player.ySpeed).angle();
+			if(rotation == 0 && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+				rotation = player.rotation;
+			else
+				player.rotation = rotation;
+		player.draw(batch, rotation);
+				
 		batch.end();
 
 		layer[0] = 1;
@@ -252,6 +279,7 @@ public class GameScreen implements Screen {
 		
 		fow.begin();
 		font.draw(fow, "Lightpacks: " + player.lightpacks +"/5", 20, 85);
+		font.draw(fow, ""+lightpacks.get(0).consumed, 20, 120);
 		fow.end();
 	}
 
