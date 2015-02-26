@@ -158,7 +158,6 @@ public class GameScreen implements Screen {
 		//CollisionDetection Player x-Axis
         if(player.wallCollision(dt))
         	player.ySpeed = 0;
-=======
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed) {
            tiledMap.setDoor(8,13,!tiledMap.getDoor(8,13));
@@ -168,7 +167,7 @@ public class GameScreen implements Screen {
         }
 
         //CollisionDetection Player y-Axis
-        if(wallColission(dt)) {
+        if(player.wallCollision(dt)) {
             player.ySpeed = 0;
         }
 		
