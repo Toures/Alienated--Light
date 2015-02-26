@@ -15,7 +15,7 @@ public class GameObject {
     protected float xSpeed;
     protected float ySpeed;
     protected Vector2 worldPosition;
-    protected Vector2 direction = new Vector2(0f,0f);
+    protected Vector2 direction = new Vector2();
     protected Texture texture;
     protected GameScreen screen;
     protected float scale=1;
@@ -35,6 +35,10 @@ public class GameObject {
 
     public float getHeight() {
         return this.texture.getHeight();
+    }
+    
+    public int getRotation() {
+    	return (int) new Vector2(xSpeed,ySpeed).angle();
     }
 
     public void draw(SpriteBatch batch, int rotation) {
@@ -58,14 +62,18 @@ public class GameObject {
     }
     
     public Circle calculateHitbox(Vector2 newWorldPosition){
-         return new Circle(newWorldPosition.add(getWidth()/2, getHeight()/2), getHeight()/2-4);
+        return new Circle(newWorldPosition.add(getWidth()/2, getHeight()/2), getHeight()/2-4);
     }
     
     public Vector2 calculateNewWorldPosition(float dt){
     	
-    	 Vector2 move = new Vector2(xSpeed*SPEED*dt,ySpeed*SPEED*dt);
-    	 Vector2 newPosition = new Vector2(worldPosition);
-         return newPosition.add(move);
+    	Vector2 move = new Vector2();
+    	if(!direction.isZero())
+    		move.set(direction).scl(SPEED*dt);
+    	else
+    		move.set(xSpeed*SPEED*dt,ySpeed*SPEED*dt);
+    	Vector2 newPosition = new Vector2(worldPosition);
+        return newPosition.add(move);
     }
 
 }

@@ -24,8 +24,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -35,16 +37,14 @@ public class GameScreen implements Screen {
     private Game parent;
     private SpriteBatch batch;
 	private BitmapFont font;
-	private Player player;
+	protected Player player;
 	private NPC npc;
 	private float w;
 	private float h;
-	private List<Meteor> meteors = new ArrayList<Meteor>();
+	private List<Creep> creeps = new ArrayList<Creep>();
 	private List<MeteorAnimation> anim = new ArrayList<MeteorAnimation>();
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
-	private Texture img;
     private MyMap tiledMap;
-    private MapLayer ground;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
 	
@@ -69,10 +69,14 @@ public class GameScreen implements Screen {
         camera.update();
         tiledMap =new MyMap("Map3.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
-        ground = tiledMap.map.getLayers().get(0);
 		player = new Player(this);
-		npc = new NPC(this);
-		
+		//npc = new NPC(this);
+		creeps.add(new Creep(this, new Vector2(300,300)));
+		creeps.add(new Creep(this, new Vector2(100,400)));
+		creeps.add(new Creep(this, new Vector2(400,100)));
+		creeps.get(0).path.add(new Vector2(315,310));
+		creeps.get(1).path.add(new Vector2(110,415));
+		creeps.get(2).path.add(new Vector2(415,110));
 		
 		//music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
 		//crash = Gdx.audio.newSound(Gdx.files.internal("crash.ogg"));
@@ -171,7 +175,10 @@ public class GameScreen implements Screen {
         //Update camera and everything else
 		camera.position.set(player.worldPosition, camera.position.z);
 		player.update(dt);
-		npc.update(dt);
+		//npc.update(dt);
+		for(Creep creep : creeps) {
+			creep.update(dt);
+		}
 		camera.update();
 		
 		
@@ -220,18 +227,22 @@ public class GameScreen implements Screen {
         //Objects
 		batch.begin();
 		batch.setProjectionMatrix(camera.combined);
+		//Player
 		int rotation = (int)new Vector2(player.xSpeed,player.ySpeed).angle();
 		if(rotation == 0 && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))
 			rotation = player.rotation;
 		else
 			player.rotation = rotation;
 		player.draw(batch, rotation);
-		npc.draw(batch);
-		font.draw(batch, npc.xSpeed +"   "+ npc.ySpeed, 100, 100);
+		//npc.draw(batch);
+		for(Creep creep : creeps) {
+			creep.draw(batch,creep.getRotation());
+		}
+		batch.end();
 		
 		layer[0] = 1;
 		tiledMapRenderer.render(layer);
-		batch.end();
+		
 		drawBars();
 	}
 	
@@ -263,6 +274,11 @@ public class GameScreen implements Screen {
 		healthBar.rect(20, 47, (int) player.health, 18);
 		healthBar.end();
 		healthBar.dispose();
+		
+		batch.begin();
+		font.draw(batch, "" + creeps.get(0).isPlayerNear(), 100, 100);
+		font.draw(batch, "" + creeps.get(0).path.get(0), 100, 80);
+		batch.end();
 	}
 
 	@Override
