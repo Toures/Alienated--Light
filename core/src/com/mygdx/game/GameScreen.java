@@ -61,6 +61,7 @@ public class GameScreen implements Screen {
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
     boolean dPressed=false;
     private  float doorTimer = DOOR_COOLDOWN;
+    private Sound music;
 	
 	public float getH() {
 		return h;
@@ -85,7 +86,7 @@ public class GameScreen implements Screen {
         tiledMap =new MyMap("Map3.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
 		player = new Player(this);
-		
+
 		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
 		creeps.get(0).path.add(new Vector2(25*32,13*32));
 		creeps.get(0).path.add(new Vector2(13*32,13*32));
@@ -354,13 +355,14 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
+        music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
+        music.loop();
 
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
+		music.stop();
 
 	}
 
