@@ -7,6 +7,7 @@ public class Creep extends NPC {
 	float attackCooldown;
 	float huntingRange;
 	boolean huntingMode;
+	boolean blinded;
 	
 	public Creep(GameScreen screen, Vector2 position) {
         super(screen, "ego-01.png", position);

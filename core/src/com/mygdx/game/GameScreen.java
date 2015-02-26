@@ -55,6 +55,7 @@ public class GameScreen implements Screen {
 	protected Player player;
 	//Pixmaps
 	private Texture fowtexture;
+	private Texture fowtexturebig;
 	private Texture lighttexture;
 	private Texture blindtexture;
 	//Misc
@@ -107,6 +108,20 @@ public class GameScreen implements Screen {
         pixmap.setColor(0, 0, 0, 0f);
         pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
         fowtexture = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+        
+        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor( 0, 0, 0, 1 );
+        pixmap.fill();
+        pixmap.setColor(0, 0, 0, 0.6f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 220);
+        pixmap.setColor(0, 0, 0, 0.3f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 180);
+        pixmap.setColor(0, 0, 0, 0f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 140);
+        fowtexturebig = new Texture(pixmap);
         pixmap.setBlending(Blending.SourceOver);
         pixmap.dispose();
         
@@ -222,17 +237,39 @@ public class GameScreen implements Screen {
         //Update camera and everything else
 		camera.position.set(player.worldPosition, camera.position.z);
 		player.update(dt);
+		
+		//Alien - Light interaction
+		for(Light light : lights) {
+			light.update(dt);
+			for(Creep creep : creeps) {
+				if( 100 > light.worldPosition.dst(creep.worldPosition) && light.active) {
+					creep.blinded = true;
+					if(light.lifetime > 5) {
+						//Dass hier nichts passiert sorgt dafür, dass die creeps eingefroren sind.
+//						Vector2 diff = new Vector2(light.worldPosition).sub(creep.worldPosition).scl(-1);
+//						creep.xSpeed = Math.max(-1, Math.min(1, diff.x));
+//						creep.ySpeed = Math.max(-1, Math.min(1, diff.y));
+					} else {
+						creep.moveTo(light.worldPosition, dt);
+						creep.huntingMode=false;
+						creep.huntingRange=50;
+					}
+				} else if(creep.blinded){
+					creep.blinded = false;
+					creep.moveTo(creep.path.get(creep.waypoint), dt);
+				}
+			}
+		}
+		
 		for(Creep creep : creeps) {
-			creep.update(dt);
+			if(!creep.blinded)
+				creep.update(dt);
 		}
 		for(Healthpack healthpack : healthpacks) {
 			healthpack.update(dt);
 		}
 		for(Lightpack lightpack : lightpacks) {
 			lightpack.update(dt);
-		}
-		for(Light light : lights) {
-			light.update(dt);
 		}
 		camera.update();
 
@@ -300,10 +337,17 @@ public class GameScreen implements Screen {
 		
 		//Fog of War
 		fow.begin();
-        fow.draw(fowtexture, 0, 0);
+		boolean extralight = false;
+		for(Light light : lights)
+			if(player.worldPosition.dst(light.worldPosition) < 150 && light.active)
+				extralight = true;
+		if(extralight)
+			fow.draw(fowtexturebig, 0, 0);
+		else
+			fow.draw(fowtexture, 0, 0);
         for(Light light : lights) {
 			if(light.active) {
-				if(light.lifetime > 9) {
+				if(light.lifetime > 5) {
 					fow.draw(blindtexture, 0, 0);
 				}
 			}
