@@ -250,10 +250,9 @@ public class GameScreen implements Screen {
 		healthBar.end();
 		healthBar.dispose();
 		
-		batch.begin();
-		font.draw(batch, "" + creeps.get(0).isPlayerNear(100), 100, 100);
-		font.draw(batch, "" + creeps.get(0).path.get(0), 100, 80);
-		batch.end();
+		fow.begin();
+		font.draw(fow, "Lightpacks: " + player.lightpacks +"/5", 20, 85);
+		fow.end();
 	}
 
 	@Override

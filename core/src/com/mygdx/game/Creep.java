@@ -6,8 +6,11 @@ import com.badlogic.gdx.math.Vector2;
 public class Creep extends NPC {
 
 	float attackCooldown;
+	int huntingRange;
+	
 	public Creep(GameScreen screen, Vector2 position) {
         super(screen, "ego-01.png", position);
+        huntingRange = 100;
 	}
 	
 	public void update(float dt) {
@@ -20,9 +23,10 @@ public class Creep extends NPC {
 			currentWaypoint.set(path.get(waypoint));
 		}
 		
-		if(isPlayerNear(100)) {
+		if(isPlayerNear(huntingRange)) {
 			moveTo(screen.player.worldPosition, dt);
 			speedFactor = 1;
+			huntingRange = 200;
 			if(isPlayerNear(15) && attackCooldown == 0) {
 				attackCooldown = 1;
 				screen.player.doHealth(-20);
@@ -34,6 +38,7 @@ public class Creep extends NPC {
 		else {
 			moveTo(currentWaypoint,dt);
 			speedFactor = 0.6f;
+			huntingRange = 100;
 		}
 		
 	}
