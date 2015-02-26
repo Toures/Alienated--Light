@@ -1,16 +1,17 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
 public class Creep extends NPC {
 
 	float attackCooldown;
-	int huntingRange;
+	float huntingRange;
+	boolean huntingMode;
 	
 	public Creep(GameScreen screen, Vector2 position) {
         super(screen, "ego-01.png", position);
         huntingRange = 100;
+        huntingMode = false;
 	}
 	
 	public void update(float dt) {
@@ -24,21 +25,26 @@ public class Creep extends NPC {
 		}
 		
 		if(isPlayerNear(huntingRange)) {
+			if(!huntingMode) {
+				huntingRange = 200;
+				huntingMode = true;
+				speedFactor = 1;
+			}
 			moveTo(screen.player.worldPosition, dt);
-			speedFactor = 1;
-			huntingRange = 200;
 			if(isPlayerNear(15) && attackCooldown == 0) {
 				attackCooldown = 1;
 				screen.player.doHealth(-20);
+				huntingRange = 200;
 			}
 			else
 				attackCooldown = Math.max(0, attackCooldown-dt);
-				
+			huntingRange = huntingRange - dt*3;
 		}
 		else {
 			moveTo(currentWaypoint,dt);
 			speedFactor = 0.6f;
-			huntingRange = 100;
+			huntingRange = Math.min(huntingRange + dt*3, 100);
+			huntingMode = false;
 		}
 		
 	}
