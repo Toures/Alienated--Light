@@ -47,6 +47,7 @@ public class GameScreen implements Screen {
     private MapLayer ground;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
+    boolean dPressed=false;
 	
 	public float getH() {
 		return h;
@@ -130,8 +131,15 @@ public class GameScreen implements Screen {
 		} else {
 			player.ySpeed /= 1.3;
 		}
-		
-		//CollisionDetection Player y-Axis
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed) {
+           tiledMap.setDoor(8,13,!tiledMap.getDoor(8,13));
+            dPressed=true;
+        }else{
+            dPressed=false;
+        }
+
+        //CollisionDetection Player y-Axis
         if(wallColission(dt)) {
             player.ySpeed = 0;
         }
@@ -176,6 +184,9 @@ public class GameScreen implements Screen {
 	}
 
     private boolean wallColission(float dt){
+        boolean isSolid;
+        boolean isDoor;
+        boolean isOpen=false;
         for (int i = Math.max(0,(int)(player.worldPosition.x/32)-1);
              i <= Math.min((int)(player.worldPosition.x/32)+1, MyMap.MAPWIDTH);
              i++) {
@@ -185,14 +196,21 @@ public class GameScreen implements Screen {
 
                 TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
                 TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                isSolid=false;
                 if(cell.getTile().getProperties().get("SOLID") != null) {
-                    if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
-                        if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
-                           return true;
-                        }
+                    isSolid = ((String) cell.getTile().getProperties().get("SOLID")).equals("1");
+                }
+                if(tiledMap.isDoor(i,j)) {
+                    isDoor = true;
+                    isOpen = tiledMap.getDoor(i,j);
+                }else {
+                    isDoor=false;
+                }
+                if(isSolid||(isDoor&&!isOpen)) {
+                    if (Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)), tiledMap.getRectTile(i, j))) {
+                        return true;
                     }
                 }
-
             }
         }
         return false;
@@ -225,6 +243,7 @@ public class GameScreen implements Screen {
 		batch.end();
 		drawBars();
 	}
+
 	
 	private void drawBars() {
 		ShapeRenderer energyBar = new ShapeRenderer();
