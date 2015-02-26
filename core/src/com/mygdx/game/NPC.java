@@ -44,16 +44,20 @@ public class NPC extends GameObject {
 	
 	public void moveTo(Vector2 destination, float dt) {
 		if(destination.x > worldPosition.x)
-			xSpeed += 0.02;
+			xSpeed += 0.04;
 		else
-			xSpeed -= 0.02;
+			xSpeed -= 0.04;
+		if(wallCollision(dt))
+			xSpeed = 0;
 		if(destination.y > worldPosition.y)
-			ySpeed += 0.02;
+			ySpeed += 0.04;
 		else
-			ySpeed -= 0.02;
+			ySpeed -= 0.04;
+		if(wallCollision(dt))
+			ySpeed = 0;
 		
-		xSpeed = Math.min(1, xSpeed);
-		ySpeed = Math.min(1, ySpeed);
+		xSpeed = Math.max(-speedFactor,Math.min(speedFactor, xSpeed));
+		ySpeed = Math.max(-speedFactor,Math.min(speedFactor, ySpeed));
 		
     	worldPosition = calculateNewWorldPosition(dt);
         hitbox.setPosition(worldPosition);
@@ -69,8 +73,8 @@ public class NPC extends GameObject {
 			return false;
 	}
 	
-	public boolean isPlayerNear() {
-		if( 100 > screen.player.worldPosition.dst(worldPosition))
+	public boolean isPlayerNear(int distance) {
+		if( distance > screen.player.worldPosition.dst(worldPosition))
 			return true;
 		else
 			return false;

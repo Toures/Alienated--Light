@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -20,6 +22,7 @@ public class GameObject {
     protected GameScreen screen;
     protected float scale=1;
     protected Circle hitbox;
+	protected float speedFactor;
 
 
     public GameObject(GameScreen screen, String textur, Vector2 position){
@@ -60,6 +63,29 @@ public class GameObject {
     	worldPosition = calculateNewWorldPosition(dt);
         hitbox.setPosition(worldPosition);
     }
+    
+	public boolean wallCollision(float dt){
+        for (int i = Math.max(0,(int)(worldPosition.x/32)-1);
+             i <= Math.min((int)(worldPosition.x/32)+1, MyMap.MAPWIDTH);
+             i++) {
+            for (int j = Math.max(0,(int)(worldPosition.y/32)-1);
+                 j <= Math.min((int)(worldPosition.y/32)+1, MyMap.MAPWIDTH);
+                 j++) {
+
+                TiledMapTileLayer layer =(TiledMapTileLayer)screen.tiledMap.map.getLayers().get(0);
+                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                if(cell.getTile().getProperties().get("SOLID") != null) {
+                    if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
+                        if(Intersector.overlaps(calculateHitbox(calculateNewWorldPosition(dt)),screen.tiledMap.getRectTile(i,j))) {
+                           return true;
+                        }
+                    }
+                }
+
+            }
+        }
+        return false;
+	}
     
     public Circle calculateHitbox(Vector2 newWorldPosition){
         return new Circle(newWorldPosition.add(getWidth()/2, getHeight()/2), getHeight()/2-4);

@@ -14,6 +14,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Blending;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
@@ -36,6 +39,8 @@ public class GameScreen implements Screen {
 	public static final int TILESIZE = 32;
     private Game parent;
     private SpriteBatch batch;
+    private SpriteBatch fow;
+    private Texture fowtexture;
 	private BitmapFont font;
 	protected Player player;
 	private NPC npc;
@@ -44,9 +49,10 @@ public class GameScreen implements Screen {
 	private List<Creep> creeps = new ArrayList<Creep>();
 	private List<MeteorAnimation> anim = new ArrayList<MeteorAnimation>();
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
-    private MyMap tiledMap;
+    protected MyMap tiledMap;
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
+    private boolean paused;
 	
 	public float getH() {
 		return h;
@@ -63,6 +69,7 @@ public class GameScreen implements Screen {
 		h = Gdx.graphics.getHeight();
 
 		batch = new SpriteBatch();
+		fow = new SpriteBatch();
 		
 		camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
@@ -71,12 +78,23 @@ public class GameScreen implements Screen {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
 		player = new Player(this);
 		//npc = new NPC(this);
-		creeps.add(new Creep(this, new Vector2(300,300)));
-		creeps.add(new Creep(this, new Vector2(100,400)));
-		creeps.add(new Creep(this, new Vector2(400,100)));
-		creeps.get(0).path.add(new Vector2(315,310));
-		creeps.get(1).path.add(new Vector2(110,415));
-		creeps.get(2).path.add(new Vector2(415,110));
+		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
+		creeps.get(0).path.add(new Vector2(25*32,13*32));
+		creeps.get(0).path.add(new Vector2(13*32,13*32));
+		
+		Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor( 0, 0, 0, 1 );
+        pixmap.fill();
+        pixmap.setColor(0, 0, 0, 0.6f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 160);
+        pixmap.setColor(0, 0, 0, 0.3f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 120);
+        pixmap.setColor(0, 0, 0, 0f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
+        fowtexture = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
 		
 		//music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
 		//crash = Gdx.audio.newSound(Gdx.files.internal("crash.ogg"));
@@ -85,6 +103,8 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float dt) {
+		if(paused)
+			return;
 		update(dt);
 		draw();
 	}
@@ -119,9 +139,8 @@ public class GameScreen implements Screen {
 		}
 
 		//CollisionDetection Player x-Axis
-        if(wallColission(dt)) {
-            player.xSpeed = 0;
-        }
+        if(player.wallCollision(dt))
+        	player.xSpeed = 0;
 
 		//Controls y-Axis
         player.ySpeed=oldy;
@@ -135,10 +154,9 @@ public class GameScreen implements Screen {
 			player.ySpeed /= 1.3;
 		}
 		
-		//CollisionDetection Player y-Axis
-        if(wallColission(dt)) {
-            player.ySpeed = 0;
-        }
+		//CollisionDetection Player x-Axis
+        if(player.wallCollision(dt))
+        	player.ySpeed = 0;
 		
         //Update camera and everything else
 		camera.position.set(player.worldPosition, camera.position.z);
@@ -182,34 +200,12 @@ public class GameScreen implements Screen {
 
 	}
 
-    private boolean wallColission(float dt){
-        for (int i = Math.max(0,(int)(player.worldPosition.x/32)-1);
-             i <= Math.min((int)(player.worldPosition.x/32)+1, MyMap.MAPWIDTH);
-             i++) {
-            for (int j = Math.max(0,(int)(player.worldPosition.y/32)-1);
-                 j <= Math.min((int)(player.worldPosition.y/32)+1, MyMap.MAPWIDTH);
-                 j++) {
-
-                TiledMapTileLayer layer =(TiledMapTileLayer)tiledMap.map.getLayers().get(0);
-                TiledMapTileLayer.Cell cell = layer.getCell(i, j);
-                if(cell.getTile().getProperties().get("SOLID") != null) {
-                    if(((String)cell.getTile().getProperties().get("SOLID")).equals("1")) {
-                        if(Intersector.overlaps(player.calculateHitbox(player.calculateNewWorldPosition(dt)),tiledMap.getRectTile(i,j))) {
-                           return true;
-                        }
-                    }
-                }
-
-            }
-        }
-        return false;
-	}
-
 	private void draw() {
 		//Clear
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
         //Tileset
         camera.update();
         tiledMapRenderer.setView(camera);
@@ -230,9 +226,14 @@ public class GameScreen implements Screen {
 			creep.draw(batch,creep.getRotation());
 		}
 		batch.end();
-		
+
 		layer[0] = 1;
 		tiledMapRenderer.render(layer);
+		
+		//Fog of War
+		fow.begin();
+        fow.draw(fowtexture, 0, 0);
+        fow.end();
 		
 		drawBars();
 	}
@@ -267,7 +268,7 @@ public class GameScreen implements Screen {
 		healthBar.dispose();
 		
 		batch.begin();
-		font.draw(batch, "" + creeps.get(0).isPlayerNear(), 100, 100);
+		font.draw(batch, "" + creeps.get(0).isPlayerNear(100), 100, 100);
 		font.draw(batch, "" + creeps.get(0).path.get(0), 100, 80);
 		batch.end();
 	}
@@ -292,13 +293,13 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
+		paused = true;
 
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
+		paused = false;
 
 	}
 
