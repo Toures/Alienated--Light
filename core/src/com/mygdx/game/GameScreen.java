@@ -53,6 +53,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private TiledMapRenderer tiledMapRenderer;
     private boolean paused;
+    boolean dPressed=false;
 	
 	public float getH() {
 		return h;
@@ -157,6 +158,19 @@ public class GameScreen implements Screen {
 		//CollisionDetection Player x-Axis
         if(player.wallCollision(dt))
         	player.ySpeed = 0;
+=======
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed) {
+           tiledMap.setDoor(8,13,!tiledMap.getDoor(8,13));
+            dPressed=true;
+        }else{
+            dPressed=false;
+        }
+
+        //CollisionDetection Player y-Axis
+        if(wallColission(dt)) {
+            player.ySpeed = 0;
+        }
 		
         //Update camera and everything else
 		camera.position.set(player.worldPosition, camera.position.z);
