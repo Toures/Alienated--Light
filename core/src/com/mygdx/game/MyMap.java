@@ -32,7 +32,7 @@ public class MyMap {
                 TiledMapTileLayer.Cell cell = groudLayer.getCell(i, j);
                 if(cell.getTile().getProperties().get("DOOR")!=null) {
                     doors.put(new Vector2(i,j),new Door(((String) cell.getTile().getProperties().get("OPEN")).equals("1"),
-                            Integer.parseInt((String)cell.getTile().getProperties().get("DIRECTION"))));
+                            Integer.parseInt((String)cell.getTile().getProperties().get("DIRECTION")),((String) cell.getTile().getProperties().get("OPEN")).equals("-1")));
                 }
 
             }
@@ -52,25 +52,27 @@ public class MyMap {
 	}
 
     public void setDoor(int x, int y,boolean value){
-        TiledMapTileLayer.Cell cell = groudLayer.getCell(x, y);
-        String opened=(!value?"closed":"opend");
-        String direction="";
-        switch (getDoor(x,y).direction){
-            case 1:
-               direction="horizontal_left";
-                break;
-            case 2:
-                direction="horizontal_right";
-                break;
-            case 3:
-                direction="vertikal_down";
-                break;
-            case 4:
-                direction="vertikal_up";
-                break;
+        if(!getDoor(x,y).locked) {
+            TiledMapTileLayer.Cell cell = groudLayer.getCell(x, y);
+            String opened = (!value ? "closed" : "opend");
+            String direction = "";
+            switch (getDoor(x, y).direction) {
+                case 1:
+                    direction = "horizontal_left";
+                    break;
+                case 2:
+                    direction = "horizontal_right";
+                    break;
+                case 3:
+                    direction = "vertikal_down";
+                    break;
+                case 4:
+                    direction = "vertikal_up";
+                    break;
+            }
+            cell.setTile(new StaticTiledMapTile(new TextureRegion(new Texture(Gdx.files.internal("door/door_" + opened + "_" + direction + "-01.png")))));
+            getDoor(x, y).open = value;
         }
-        cell.setTile(new StaticTiledMapTile(new TextureRegion(new Texture(Gdx.files.internal("door/door_"+opened+"_"+direction+"-01.png")))));
-        getDoor(x,y).open=value;
     }
     public Door getDoor(int x, int y){
         return doors.get(new Vector2(x,y));

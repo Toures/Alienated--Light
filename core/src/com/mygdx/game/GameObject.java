@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -80,6 +81,37 @@ public class GameObject {
                 isSolid=false;
                 if(cell.getTile().getProperties().get("SOLID") != null) {
                     isSolid = ((String) cell.getTile().getProperties().get("SOLID")).equals("1");
+                }
+                if(cell.getTile().getProperties().get("ACTION") != null) {
+                    if(!screen.eInterducted){
+                        screen.eInterducted=true;
+                        screen.typewriters.remove(screen.typewriters.size()-1);
+                        TypeWriter doortext=new TypeWriter(screen,"ohh...a console...lets press [E] to hack it",new Vector2(20,screen.getH()-20),10);
+                        screen.typewriters.add(doortext);
+                    }
+                    if(((String) cell.getTile().getProperties().get("ACTION")).equals("1")&&!this.screen.doorsEnabled&&Gdx.input.isKeyPressed(Input.Keys.E)){
+                        if(screen.typewriters.size()>0) {
+                            screen.typewriters.remove(screen.typewriters.size() - 1);
+                        }
+
+                        TypeWriter doortext2=new TypeWriter(screen,"lets hack it ......................",new Vector2(20,screen.getH()-20),2);
+                        doortext2.time=0;
+                        //screen.typewriters.add(doortext2);
+                        TypeWriter doortext3=new TypeWriter(screen,".............yes!\nall doors are working now!",new Vector2(20,screen.getH()-20),7);
+                        doortext3.time=5;
+                        screen.doorsactive.play();
+                        screen.typewriters.add(doortext3);
+                        for (Vector2 key : screen.tiledMap.doors.keySet())
+                        {
+                            screen.tiledMap.getDoor((int)key.x,(int)key.y).locked=false;
+                        }
+                        screen.doorsEnabled=true;
+                    }
+                    if(((String) cell.getTile().getProperties().get("ACTION")).equals("0")&&!this.screen.creditsShown&&Gdx.input.isKeyPressed(Input.Keys.E)){
+                        screen.creditsShown=true;
+                        screen.creditsEnabled=true;
+                    }
+
                 }
                 if(screen.tiledMap.isDoor(i,j)) {
                     isDoor = true;

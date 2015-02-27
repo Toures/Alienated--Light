@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
 public class TypeWriter {
-    public static final float SPEED = 2f;
+    public static final float SPEED = 13f;
     protected Vector2 position;
     protected GameScreen screen;
     protected String text;
@@ -28,10 +28,15 @@ public class TypeWriter {
 
 
     public void draw(SpriteBatch batch, BitmapFont font) {
-        int chars =((int)(time*SPEED))<text.length()?((int)(time*SPEED)):text.length();
+        font.scale(2);
+        int chars =Math.abs((int)(time*SPEED))<text.length()?((int)(time*SPEED)):text.length();
+        if (chars<0){
+            chars=0;
+        }
         if(time<timeToStay) {
             font.draw(batch, text.substring(0, chars), position.x, position.y);
         }
+        font.scale(-2);
     }
     
 

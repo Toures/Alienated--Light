@@ -15,6 +15,7 @@ public class Lightpack extends GameObject {
 		if( 20 > screen.player.worldPosition.dst(worldPosition) && !consumed && screen.player.lightpacks < 5) {
 			screen.player.lightpacks = Math.min(5, screen.player.lightpacks+3);
 			consumed = true;
+            screen.plop.play();
 		}
 	}
 
