@@ -260,7 +260,7 @@ public class GameScreen implements Screen {
         //Tileset
         camera.update();
         tiledMapRenderer.setView(camera);
-        int[] layer = {0};
+        int[] layer = {0,1,2};
         tiledMapRenderer.render(layer);
         //Objects
 		batch.begin();
@@ -307,8 +307,8 @@ public class GameScreen implements Screen {
 				
 		batch.end();
 
-		layer[0] = 1;
-		tiledMapRenderer.render(layer);
+		int[] layerOver={3,4};
+		tiledMapRenderer.render(layerOver);
 		
 		//Fog of War
 		fow.begin();
