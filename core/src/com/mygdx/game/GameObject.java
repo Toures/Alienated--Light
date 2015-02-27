@@ -81,13 +81,13 @@ public class GameObject {
                 TiledMapTileLayer layer2 =(TiledMapTileLayer)screen.tiledMap.map.getLayers().get(0);
                 TiledMapTileLayer.Cell cell2 = layer2.getCell(i, j);
                 isSolid=false;
-                if(cell.getTile().getProperties().get("SOLID") != null) {
+                if(cell!=null&&cell.getTile().getProperties().containsKey("SOLID")&& cell.getTile().getProperties().get("SOLID") != null) {
                     isSolid = ((String) cell.getTile().getProperties().get("SOLID")).equals("1");
                 }
-                if(cell2.getTile().getProperties().get("SOLID") != null&&!isSolid) {
+                if(cell2!=null&&cell2.getTile().getProperties().containsKey("SOLID")&&cell2.getTile().getProperties().get("SOLID") != null&&!isSolid) {
                     isSolid = ((String) cell2.getTile().getProperties().get("SOLID")).equals("1");
                 }
-                if(cell.getTile().getProperties().get("ACTION") != null) {
+                if(cell!=null&&cell.getTile().getProperties().containsKey("ACTION")&&cell.getTile().getProperties().get("ACTION") != null) {
                     if(!screen.eInterducted){
                         screen.eInterducted=true;
                         screen.typewriters.remove(screen.typewriters.size()-1);

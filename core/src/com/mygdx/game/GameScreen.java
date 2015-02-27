@@ -452,34 +452,34 @@ public class GameScreen implements Screen {
         creeps.get(12).path.add(new Vector2(14*32,20*32));
         creeps.get(12).path.add(new Vector2(15*32,19*32));
         //Ballsroom
-        creeps.add(new Creep(this, new Vector2(19*32,9*10)));
+        creeps.add(new Creep(this, new Vector2(19*32,9*32)));
         creeps.get(13).path.add(new Vector2(18*32,8*32));
         creeps.get(13).path.add(new Vector2(19*32,8*32));
         //Doorroom
-        creeps.add(new Creep(this, new Vector2(31*32,19*10)));
+        creeps.add(new Creep(this, new Vector2(31*32,19*32)));
         creeps.get(14).path.add(new Vector2(31*32,8*32));
         creeps.get(14).path.add(new Vector2(30*32,9*32));
-        creeps.add(new Creep(this, new Vector2(25*32,5*10)));
+        creeps.add(new Creep(this, new Vector2(25*32,5*32)));
         creeps.get(15).path.add(new Vector2(26*32,6*32));
         creeps.get(15).path.add(new Vector2(25*32,5*32));
         //Alienroom
-        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.add(new Creep(this, new Vector2(41*32,12*32)));
         creeps.get(16).path.add(new Vector2(26*32,14*32));
         creeps.get(16).path.add(new Vector2(35*32,14*32));
         creeps.get(16).path.add(new Vector2(35*32,6*32));
-        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.add(new Creep(this, new Vector2(41*32,12*32)));
         creeps.get(17).path.add(new Vector2(41*32,6*32));
         creeps.get(17).path.add(new Vector2(47*32,6*32));
         creeps.get(17).path.add(new Vector2(48*32,9*32));
         creeps.get(17).path.add(new Vector2(42*32,9*32));
-        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.add(new Creep(this, new Vector2(41*32,12*32)));
         creeps.get(18).path.add(new Vector2(27*32,13*32));
         creeps.get(18).path.add(new Vector2(43*32,14*32));
-        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.add(new Creep(this, new Vector2(41*32,12*32)));
         creeps.get(19).path.add(new Vector2(35*32,13*32));
         creeps.get(19).path.add(new Vector2(35*32,3*32));
         //Vents
-        creeps.add(new Creep(this, new Vector2(31*32,23*10)));
+        creeps.add(new Creep(this, new Vector2(31*32,23*32)));
         creeps.get(20).path.add(new Vector2(31*32,25*32));
         creeps.get(20).path.add(new Vector2(31*32,21*32));
         
