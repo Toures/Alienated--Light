@@ -78,9 +78,14 @@ public class GameObject {
 
                 TiledMapTileLayer layer =(TiledMapTileLayer)screen.tiledMap.map.getLayers().get(0);
                 TiledMapTileLayer.Cell cell = layer.getCell(i, j);
+                TiledMapTileLayer layer2 =(TiledMapTileLayer)screen.tiledMap.map.getLayers().get(0);
+                TiledMapTileLayer.Cell cell2 = layer2.getCell(i, j);
                 isSolid=false;
                 if(cell.getTile().getProperties().get("SOLID") != null) {
                     isSolid = ((String) cell.getTile().getProperties().get("SOLID")).equals("1");
+                }
+                if(cell2.getTile().getProperties().get("SOLID") != null&&!isSolid) {
+                    isSolid = ((String) cell2.getTile().getProperties().get("SOLID")).equals("1");
                 }
                 if(cell.getTile().getProperties().get("ACTION") != null) {
                     if(!screen.eInterducted){
