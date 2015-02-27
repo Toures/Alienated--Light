@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -37,6 +38,7 @@ public class GameScreen implements Screen {
 	public static final int TILESIZE = 32;
     private static final int DOOR_COOLDOWN = 1;
     private Meteorstorm parent;
+
     private SpriteBatch batch;
     private SpriteBatch fow;
 	private BitmapFont font;
@@ -64,6 +66,7 @@ public class GameScreen implements Screen {
     boolean dPressed=false;
     private  float doorTimer = DOOR_COOLDOWN;
     private Sound music;
+    private List<TypeWriter> typewriters=new ArrayList<TypeWriter>();
 	
 	public float getH() {
 		return h;
@@ -92,7 +95,7 @@ public class GameScreen implements Screen {
 		
 		doorTimer+=dt;
 
-		 if(Gdx.input.isKeyPressed(Input.Keys.R)){
+		 if(Gdx.input.isKeyPressed(Input.Keys.PLUS)){
              parent.setScreen(parent.pause);
              return;
          }
@@ -205,6 +208,9 @@ public class GameScreen implements Screen {
 			if(!creep.blinded)
 				creep.update(dt);
 		}
+        for(TypeWriter t : typewriters) {
+                t.update(dt);
+        }
 		for(Healthpack healthpack : healthpacks) {
 			healthpack.update(dt);
 		}
@@ -297,6 +303,10 @@ public class GameScreen implements Screen {
 					fow.draw(blindtexture, 0, 0);
 				}
 			}
+        }
+
+        for(TypeWriter t : typewriters) {
+            t.draw(fow,font);
         }
         fow.end();
 		
@@ -420,6 +430,9 @@ public class GameScreen implements Screen {
         pixmap.fill();
         blindtexture = new Texture(pixmap);
         pixmap.dispose();
+        TypeWriter doortext=new TypeWriter(this,"press [D] to open doors",new Vector2(20,h-20),20);
+        doortext.time=-15;
+        typewriters.add(doortext);
 
         music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
         music.loop();
