@@ -404,14 +404,24 @@ public class GameScreen implements Screen {
         tiledMap =new MyMap("MapCampaign.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
         player = new Player(this);
-        player.worldPosition=new Vector2(13*32,15*32);
-        creeps.add(new Creep(this, new Vector2(15*32,12*32)));
-        creeps.get(0).path.add(new Vector2(25*32,13*32));
-        creeps.get(0).path.add(new Vector2(13*32,13*32));
+        player.worldPosition=new Vector2(63*32,16*32);
+        
+        //Creeps
+        creeps.add(new Creep(this, new Vector2(55*32,16*32)));
+        creeps.get(0).path.add(new Vector2(55*32,21*32));
+        creeps.get(0).path.add(new Vector2(60*32,20*32));
+        creeps.add(new Creep(this, new Vector2(38*32,11*32)));
+        creeps.get(1).path.add(new Vector2(38*32,11*32));
+        creeps.get(1).path.add(new Vector2(41*32,13*32));
         
         //Consumables
-        healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
-        lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
+        healthpacks.add(new Healthpack(this, new Vector2(8*32,7*32)));
+        healthpacks.add(new Healthpack(this, new Vector2(3*32,35*32)));
+        healthpacks.add(new Healthpack(this, new Vector2(54*32,7*32)));
+        lightpacks.add(new Lightpack(this, new Vector2(33*32,19*32)));
+        lightpacks.add(new Lightpack(this, new Vector2(17*32,8*32)));
+        lightpacks.add(new Lightpack(this, new Vector2(5*32,36*32+10)));
+        lightpacks.add(new Lightpack(this, new Vector2(56*32,8*32+10)));
 
         //Fog of War
         Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
