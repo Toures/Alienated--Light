@@ -37,10 +37,6 @@ public class GameScreen implements Screen {
 	public static final int TILESIZE = 32;
     private static final int DOOR_COOLDOWN = 1;
     private Meteorstorm parent;
-    private OrthographicCamera camera;
-    protected MyMap tiledMap;
-    private TiledMapRenderer tiledMapRenderer;
-    private boolean paused;
     private SpriteBatch batch;
     private SpriteBatch fow;
 	private BitmapFont font;
@@ -79,86 +75,9 @@ public class GameScreen implements Screen {
 
 	public GameScreen(Meteorstorm parent){
         this.parent=parent;
-		font = new BitmapFont();
-		w = Gdx.graphics.getWidth();
-		h = Gdx.graphics.getHeight();
-
-<<<<<<< HEAD
-		batch = new SpriteBatch();
-		fow = new SpriteBatch();
-		
-		//Setup camera and map
-		camera = new OrthographicCamera();
-        camera.setToOrtho(false,w,h);
-        camera.update();
-        tiledMap =new MyMap("Map3.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
-		player = new Player(this);
-
-		//Setup Aliens
-		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
-		creeps.get(0).path.add(new Vector2(25*32,13*32));
-		creeps.get(0).path.add(new Vector2(13*32,13*32));
-		
-		//Consumables
-		healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
-		lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
-		
-		//Fog of War
-		Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
-        pixmap.setBlending(Blending.None);
-        pixmap.setColor( 0, 0, 0, 1 );
-        pixmap.fill();
-        pixmap.setColor(0, 0, 0, 0.6f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 160);
-        pixmap.setColor(0, 0, 0, 0.3f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 120);
-        pixmap.setColor(0, 0, 0, 0f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
-        fowtexture = new Texture(pixmap);
-        pixmap.setBlending(Blending.SourceOver);
-        pixmap.dispose();
-        
-        //Increased vision in Fog of War (e.g. because of nearby light)
-        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
-        pixmap.setBlending(Blending.None);
-        pixmap.setColor( 0, 0, 0, 1 );
-        pixmap.fill();
-        pixmap.setColor(0, 0, 0, 0.6f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 220);
-        pixmap.setColor(0, 0, 0, 0.3f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 180);
-        pixmap.setColor(0, 0, 0, 0f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 140);
-        fowtexturebig = new Texture(pixmap);
-        pixmap.setBlending(Blending.SourceOver);
-        pixmap.dispose();
-        
-        //Lightcone
-        pixmap = new Pixmap(200,200, Format.RGBA8888 );
-        pixmap.setBlending(Blending.None);
-        pixmap.setColor(0.5f, 1, 1, 0.05f);
-        pixmap.fillCircle( 100, 100, 100);
-        pixmap.setColor(0.5f, 1, 1, 0.1f);
-        pixmap.fillCircle( 100, 100, 66);
-        pixmap.setColor(0.5f, 1, 1, 0.15f);
-        pixmap.fillCircle( 100, 100, 33);
-        lighttexture = new Texture(pixmap);
-        pixmap.setBlending(Blending.SourceOver);
-        pixmap.dispose();
-        
-        //Blindingscreen
-        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
-        pixmap.setColor( 0.8f, 1, 1, 0.15f );
-        pixmap.fill();
-        blindtexture = new Texture(pixmap);
-        pixmap.dispose();
-		
 		//music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
 		//crash = Gdx.audio.newSound(Gdx.files.internal("crash.ogg"));
 		//music.loop(0.3f);
-=======
->>>>>>> 6b0af44e9dd9b328fb4ad9e1dec2b1fd7d7e514e
 	}
 
 	@Override
@@ -292,17 +211,14 @@ public class GameScreen implements Screen {
 		for(Lightpack lightpack : lightpacks) {
 			lightpack.update(dt);
 		}
-<<<<<<< HEAD
 		
 		for(Trigger trigger : triggers) {
 			trigger.update(dt);
 		}
-=======
 		camera.update();
         if (!player.alive) {
             parent.setScreen(parent.gameover);
         }
->>>>>>> 6b0af44e9dd9b328fb4ad9e1dec2b1fd7d7e514e
 
 	}
 
