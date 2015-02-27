@@ -7,6 +7,7 @@ public class Creep extends NPC {
 	float attackCooldown;
 	float huntingRange;
 	boolean huntingMode;
+	boolean blinded;
 	
 	public Creep(GameScreen screen, Vector2 position) {
         super(screen, "ego-01.png", position);
@@ -38,12 +39,12 @@ public class Creep extends NPC {
 			}
 			else
 				attackCooldown = Math.max(0, attackCooldown-dt);
-			huntingRange = huntingRange - dt*3;
+			huntingRange = huntingRange - dt*8;
 		}
 		else {
 			moveTo(currentWaypoint,dt);
 			speedFactor = 0.6f;
-			huntingRange = Math.min(huntingRange + dt*3, 100);
+			huntingRange = Math.min(huntingRange + dt*8, 100);
 			huntingMode = false;
 		}
 		

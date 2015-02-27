@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Light extends GameObject {
 
-	float lifetime = 10f;
+	float lifetime = 6f;
 	boolean active = true;
 	
 	public Light(GameScreen screen, Vector2 position) {
@@ -16,6 +16,7 @@ public class Light extends GameObject {
 		lifetime -= dt;
 		if(lifetime <= 0)
 			active = false;
+		
 	}
 
 }

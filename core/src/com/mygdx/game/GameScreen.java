@@ -37,18 +37,28 @@ public class GameScreen implements Screen {
 	public static final int TILESIZE = 32;
     private static final int DOOR_COOLDOWN = 1;
     private Meteorstorm parent;
+    private OrthographicCamera camera;
+    protected MyMap tiledMap;
+    private TiledMapRenderer tiledMapRenderer;
+    private boolean paused;
     private SpriteBatch batch;
     private SpriteBatch fow;
-    private Texture fowtexture;
 	private BitmapFont font;
-	protected Player player;
-	private NPC npc;
 	private float w;
 	private float h;
+	
+	//Objectlists
 	private List<Creep> creeps = new ArrayList<Creep>();
 	private List<Healthpack> healthpacks = new ArrayList<Healthpack>();
 	private List<Lightpack> lightpacks = new ArrayList<Lightpack>();
-	private List<MeteorAnimation> anim = new ArrayList<MeteorAnimation>();
+	private List<Light> lights = new ArrayList<Light>();
+	protected Player player;
+	//Pixmaps
+	private Texture fowtexture;
+	private Texture fowtexturebig;
+	private Texture lighttexture;
+	private Texture blindtexture;
+	//Misc
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
     protected MyMap tiledMap;
     private OrthographicCamera camera;
@@ -68,6 +78,9 @@ public class GameScreen implements Screen {
 
 	public GameScreen(Meteorstorm parent){
         this.parent=parent;
+		font = new BitmapFont();
+		w = Gdx.graphics.getWidth();
+		h = Gdx.graphics.getHeight();
 
 	}
 
@@ -93,9 +106,12 @@ public class GameScreen implements Screen {
 		/* ------------------ */
 		
 		//Drop Lightpack
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.lightpacks > 0) {
-			
+		if (Gdx.input.isKeyPressed(Input.Keys.A) && player.lightpacks > 0 && player.lightpacksCooldown == 0) {
+			lights.add(new Light(this, player.worldPosition));
+			player.lightpacks--;
+			player.lightpacksCooldown = 2f;
 		}
+		player.lightpacksCooldown = Math.max(0, player.lightpacksCooldown-dt);
 		
 		//Sprinting
 		int speedFactor = 1;
@@ -159,8 +175,33 @@ public class GameScreen implements Screen {
         //Update camera and everything else
 		camera.position.set(player.worldPosition, camera.position.z);
 		player.update(dt);
+		
+		//Alien - Light interaction
+		for(Light light : lights) {
+			light.update(dt);
+			for(Creep creep : creeps) {
+				if( 100 > light.worldPosition.dst(creep.worldPosition) && light.active) {
+					creep.blinded = true;
+					if(light.lifetime > 5) {
+						//Dass hier nichts passiert sorgt daf�r, dass die creeps eingefroren sind.
+//						Vector2 diff = new Vector2(light.worldPosition).sub(creep.worldPosition).scl(-1);
+//						creep.xSpeed = Math.max(-1, Math.min(1, diff.x));
+//						creep.ySpeed = Math.max(-1, Math.min(1, diff.y));
+					} else {
+						creep.moveTo(light.worldPosition, dt);
+						creep.huntingMode=false;
+						creep.huntingRange=50;
+					}
+				} else if(creep.blinded){
+					creep.blinded = false;
+					creep.moveTo(creep.path.get(creep.waypoint), dt);
+				}
+			}
+		}
+		
 		for(Creep creep : creeps) {
-			creep.update(dt);
+			if(!creep.blinded)
+				creep.update(dt);
 		}
 		for(Healthpack healthpack : healthpacks) {
 			healthpack.update(dt);
@@ -195,12 +236,30 @@ public class GameScreen implements Screen {
 			creep.draw(batch,creep.getRotation());
 		}
 		for(Healthpack healthpack : healthpacks) {
-			if(!healthpack.consumed)
+			if(!healthpack.consumed) {
 				healthpack.draw(batch);
+				batch.draw(lighttexture, healthpack.worldPosition.x-100+healthpack.getWidth()/2, healthpack.worldPosition.y-100+healthpack.getHeight()/2);
+			}
 		}
 		for(Lightpack lightpack : lightpacks) {
-			if(!lightpack.consumed)
+			if(!lightpack.consumed) {
 				lightpack.draw(batch);
+				batch.draw(lighttexture, lightpack.worldPosition.x-100+lightpack.getWidth()/2, lightpack.worldPosition.y-100+lightpack.getHeight()/2);
+			}
+		}
+		
+		for(Light light : lights) {
+			if(light.active) {
+				light.draw(batch);
+				batch.draw(lighttexture, light.worldPosition.x-100+light.getWidth()/2, light.worldPosition.y-100+light.getHeight()/2);
+				if(light.lifetime > 9) {
+					batch.draw(lighttexture, light.worldPosition.x-100+light.getWidth()/2, light.worldPosition.y-100+light.getHeight()/2);
+					batch.draw(lighttexture, light.worldPosition.x-150+light.getWidth()/2, light.worldPosition.y-150+light.getHeight()/2,300,300);
+				}
+				if(light.lifetime > 8) {
+					batch.draw(lighttexture, light.worldPosition.x-100+light.getWidth()/2, light.worldPosition.y-100+light.getHeight()/2);
+				}
+			}
 		}
 		
 		//Player
@@ -218,7 +277,21 @@ public class GameScreen implements Screen {
 		
 		//Fog of War
 		fow.begin();
-        fow.draw(fowtexture, 0, 0);
+		boolean extralight = false;
+		for(Light light : lights)
+			if(player.worldPosition.dst(light.worldPosition) < 150 && light.active)
+				extralight = true;
+		if(extralight)
+			fow.draw(fowtexturebig, 0, 0);
+		else
+			fow.draw(fowtexture, 0, 0);
+        for(Light light : lights) {
+			if(light.active) {
+				if(light.lifetime > 5) {
+					fow.draw(blindtexture, 0, 0);
+				}
+			}
+        }
         fow.end();
 		
 		drawBars();
@@ -253,13 +326,8 @@ public class GameScreen implements Screen {
 		healthBar.end();
 		healthBar.dispose();
 		
-		batch.begin();
-		font.draw(batch, "" + creeps.get(0).isPlayerNear(100), 100, 100);
-		font.draw(batch, "" + creeps.get(0).path.get(0), 100, 80);
-		batch.end();
 		fow.begin();
-		font.draw(fow, "Lightpacks: " + player.lightpacks + "/5", 20, 85);
-		font.draw(fow, ""+lightpacks.get(0).consumed, 20, 120);
+		font.draw(fow, "Lightpacks: " + player.lightpacks +"/5", 20, 85);
 		fow.end();
 	}
 
@@ -288,11 +356,12 @@ public class GameScreen implements Screen {
         creeps.add(new Creep(this, new Vector2(15*32,12*32)));
         creeps.get(0).path.add(new Vector2(25*32,13*32));
         creeps.get(0).path.add(new Vector2(13*32,13*32));
-
+        
         //Consumables
         healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
         lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
 
+        //Fog of War
         Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
         pixmap.setBlending(Blending.None);
         pixmap.setColor( 0, 0, 0, 1 );
@@ -305,6 +374,40 @@ public class GameScreen implements Screen {
         pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
         fowtexture = new Texture(pixmap);
         pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
+        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor( 0, 0, 0, 1 );
+        pixmap.fill();
+        pixmap.setColor(0, 0, 0, 0.6f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 220);
+        pixmap.setColor(0, 0, 0, 0.3f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 180);
+        pixmap.setColor(0, 0, 0, 0f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 140);
+        fowtexturebig = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
+        //Lightcone
+        pixmap = new Pixmap(200,200, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor(0.5f, 1, 1, 0.05f);
+        pixmap.fillCircle( 100, 100, 100);
+        pixmap.setColor(0.5f, 1, 1, 0.1f);
+        pixmap.fillCircle( 100, 100, 66);
+        pixmap.setColor(0.5f, 1, 1, 0.15f);
+        pixmap.fillCircle( 100, 100, 33);
+        lighttexture = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
+        //Blindingscreen
+        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setColor( 0.8f, 1, 1, 0.15f );
+        pixmap.fill();
+        blindtexture = new Texture(pixmap);
         pixmap.dispose();
 
         music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
