@@ -6,8 +6,10 @@ package com.mygdx.game;
 public class Door {
     public boolean open;
     public int direction;
-    public Door(boolean open,int direction){
+    public  boolean locked;
+    public Door(boolean open,int direction,boolean locked){
         this.open=open;
         this.direction=direction;
+        this.locked=locked;
     }
 }
