@@ -74,9 +74,12 @@ public class NPC extends GameObject {
 	}
 	
 	public boolean isPlayerNear(float distance) {
-		if( distance > screen.player.worldPosition.dst(worldPosition))
+		if( distance >  getDistance())
 			return true;
 		else
 			return false;
 	}
+    public float getDistance(){
+        return screen.player.worldPosition.dst(worldPosition);
+    }
 }

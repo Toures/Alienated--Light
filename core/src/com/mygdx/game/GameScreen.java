@@ -1,16 +1,11 @@
 package com.mygdx.game;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -19,17 +14,9 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -71,9 +58,15 @@ public class GameScreen implements Screen {
     boolean dPressed=false;
     private  float doorTimer = DOOR_COOLDOWN;
     private Sound music;
+    private Sound batssound;
+    private Sound lightdrop;
+    public Sound doorsactive;
+    public Sound doortriger;
+    public Sound plop;
     public List<TypeWriter> typewriters=new ArrayList<TypeWriter>();
-	
-	public float getH() {
+    private long batsid;
+
+    public float getH() {
 		return h;
 	}
 
@@ -124,6 +117,7 @@ public class GameScreen implements Screen {
 			lights.add(new Light(this, player.worldPosition));
 			player.lightpacks--;
 			player.lightpacksCooldown = 2f;
+            lightdrop.play();
 		}
 		player.lightpacksCooldown = Math.max(0, player.lightpacksCooldown-dt);
 		
@@ -174,7 +168,8 @@ public class GameScreen implements Screen {
         	player.ySpeed = 0;
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed&&doorTimer>DOOR_COOLDOWN) {
-            Iterator it = tiledMap.doors.values().iterator();
+
+            doortriger.play();
 
             for (Vector2 key : tiledMap.doors.keySet())
             {
@@ -217,12 +212,17 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
-		
+		//float shortestdist=1000000000;
 		//Update-calls
 		for(Creep creep : creeps) {
 			if(!creep.blinded)
 				creep.update(dt);
-		}
+         //   shortestdist=creep.getDistance()<shortestdist?creep.getDistance():shortestdist;
+        }
+        //float vol=(float)((Math.E)-Math.log(-shortestdist/10));
+       // System.out.println(shortestdist);
+       // System.out.println(vol);
+        //batssound.setVolume(batsid,vol);
         for(TypeWriter t : typewriters) {
                 t.update(dt);
         }
@@ -396,6 +396,11 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
         camera.update();
+
+        doorsactive = Gdx.audio.newSound(Gdx.files.internal("doorsactive.mp3"));
+        doortriger = Gdx.audio.newSound(Gdx.files.internal("doortrigger.mp3"));
+        lightdrop = Gdx.audio.newSound(Gdx.files.internal("lightdrop.wav"));
+        plop = Gdx.audio.newSound(Gdx.files.internal("plop.wav"));
         tiledMap =new MyMap("MapCampaign.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
         player = new Player(this);
@@ -462,6 +467,9 @@ public class GameScreen implements Screen {
 
         music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
         music.loop();
+        //batssound = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
+        // batsid = batssound.loop();
+       // batssound.setVolume(batsid,0);
 
 	}
 

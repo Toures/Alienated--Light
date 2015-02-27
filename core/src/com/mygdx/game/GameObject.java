@@ -99,6 +99,7 @@ public class GameObject {
                         //screen.typewriters.add(doortext2);
                         TypeWriter doortext3=new TypeWriter(screen,".............yes!\nall doors are working now!",new Vector2(20,screen.getH()-20),7);
                         doortext3.time=5;
+                        screen.doorsactive.play();
                         screen.typewriters.add(doortext3);
                         for (Vector2 key : screen.tiledMap.doors.keySet())
                         {

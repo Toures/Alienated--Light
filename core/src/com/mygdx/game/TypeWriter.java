@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
 public class TypeWriter {
-    public static final float SPEED = 8f;
+    public static final float SPEED = 13f;
     protected Vector2 position;
     protected GameScreen screen;
     protected String text;
