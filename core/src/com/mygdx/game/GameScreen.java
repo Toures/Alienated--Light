@@ -2,11 +2,14 @@ package com.mygdx.game;
 
 import java.util.*;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -15,9 +18,17 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -25,7 +36,7 @@ public class GameScreen implements Screen {
 	private static final String SOLID = "Solid";
 	public static final int TILESIZE = 32;
     private static final int DOOR_COOLDOWN = 1;
-    private Game parent;
+    private Meteorstorm parent;
     private OrthographicCamera camera;
     protected MyMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
@@ -50,6 +61,10 @@ public class GameScreen implements Screen {
 	private Texture blindtexture;
 	//Misc
 	private Random randGenerator = new java.util.Random(System.currentTimeMillis());
+    protected MyMap tiledMap;
+    private OrthographicCamera camera;
+    private TiledMapRenderer tiledMapRenderer;
+    private boolean paused;
     boolean dPressed=false;
     private  float doorTimer = DOOR_COOLDOWN;
     private Sound music;
@@ -62,12 +77,13 @@ public class GameScreen implements Screen {
 		return w;
 	}
 
-	public GameScreen(Game parent){
+	public GameScreen(Meteorstorm parent){
         this.parent=parent;
 		font = new BitmapFont();
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
+<<<<<<< HEAD
 		batch = new SpriteBatch();
 		fow = new SpriteBatch();
 		
@@ -141,6 +157,8 @@ public class GameScreen implements Screen {
 		//music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
 		//crash = Gdx.audio.newSound(Gdx.files.internal("crash.ogg"));
 		//music.loop(0.3f);
+=======
+>>>>>>> 6b0af44e9dd9b328fb4ad9e1dec2b1fd7d7e514e
 	}
 
 	@Override
@@ -155,7 +173,10 @@ public class GameScreen implements Screen {
 		
 		doorTimer+=dt;
 
-		//TODO if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+		 if(Gdx.input.isKeyPressed(Input.Keys.R)){
+             parent.setScreen(parent.pause);
+             return;
+         }
 		
 		/* ------------------ */
 		/* ----- Player ----- */
@@ -216,6 +237,7 @@ public class GameScreen implements Screen {
         	player.ySpeed = 0;
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)&&!dPressed&&doorTimer>DOOR_COOLDOWN) {
+            Iterator it = tiledMap.doors.values().iterator();
 
             for (Vector2 key : tiledMap.doors.keySet())
             {
@@ -243,7 +265,7 @@ public class GameScreen implements Screen {
 				if( 100 > light.worldPosition.dst(creep.worldPosition) && light.active) {
 					creep.blinded = true;
 					if(light.lifetime > 5) {
-						//Dass hier nichts passiert sorgt dafür, dass die creeps eingefroren sind.
+						//Dass hier nichts passiert sorgt dafï¿½r, dass die creeps eingefroren sind.
 //						Vector2 diff = new Vector2(light.worldPosition).sub(creep.worldPosition).scl(-1);
 //						creep.xSpeed = Math.max(-1, Math.min(1, diff.x));
 //						creep.ySpeed = Math.max(-1, Math.min(1, diff.y));
@@ -270,10 +292,17 @@ public class GameScreen implements Screen {
 		for(Lightpack lightpack : lightpacks) {
 			lightpack.update(dt);
 		}
+<<<<<<< HEAD
 		
 		for(Trigger trigger : triggers) {
 			trigger.update(dt);
 		}
+=======
+		camera.update();
+        if (!player.alive) {
+            parent.setScreen(parent.gameover);
+        }
+>>>>>>> 6b0af44e9dd9b328fb4ad9e1dec2b1fd7d7e514e
 
 	}
 
@@ -405,6 +434,77 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
+        font = new BitmapFont();
+        w = Gdx.graphics.getWidth();
+        h = Gdx.graphics.getHeight();
+
+        batch = new SpriteBatch();
+        fow = new SpriteBatch();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false,w,h);
+        camera.update();
+        tiledMap =new MyMap("Map3.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
+        player = new Player(this);
+
+        creeps.add(new Creep(this, new Vector2(15*32,12*32)));
+        creeps.get(0).path.add(new Vector2(25*32,13*32));
+        creeps.get(0).path.add(new Vector2(13*32,13*32));
+        
+        //Consumables
+        healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
+        lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
+
+        //Fog of War
+        Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor( 0, 0, 0, 1 );
+        pixmap.fill();
+        pixmap.setColor(0, 0, 0, 0.6f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 160);
+        pixmap.setColor(0, 0, 0, 0.3f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 120);
+        pixmap.setColor(0, 0, 0, 0f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
+        fowtexture = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
+        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor( 0, 0, 0, 1 );
+        pixmap.fill();
+        pixmap.setColor(0, 0, 0, 0.6f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 220);
+        pixmap.setColor(0, 0, 0, 0.3f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 180);
+        pixmap.setColor(0, 0, 0, 0f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 140);
+        fowtexturebig = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
+        //Lightcone
+        pixmap = new Pixmap(200,200, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor(0.5f, 1, 1, 0.05f);
+        pixmap.fillCircle( 100, 100, 100);
+        pixmap.setColor(0.5f, 1, 1, 0.1f);
+        pixmap.fillCircle( 100, 100, 66);
+        pixmap.setColor(0.5f, 1, 1, 0.15f);
+        pixmap.fillCircle( 100, 100, 33);
+        lighttexture = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
+        //Blindingscreen
+        pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setColor( 0.8f, 1, 1, 0.15f );
+        pixmap.fill();
+        blindtexture = new Texture(pixmap);
+        pixmap.dispose();
+
         music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
         music.loop();
 
