@@ -17,8 +17,8 @@ import java.util.Map;
 public class MyMap {
     public TiledMap map;
 	public static final int TILESIZE = 32;
-	public static final int MAPHEIGHT = 30;
-	public static final int MAPWIDTH = 40;
+	public static final int MAPHEIGHT = 40;
+	public static final int MAPWIDTH = 70;
 
     TiledMapTileLayer groudLayer;
     public Map<Vector2,Door> doors = new HashMap<Vector2,Door>();
@@ -30,7 +30,7 @@ public class MyMap {
         for (int i = 0; i < MAPWIDTH; i++) {
             for (int j = 0; j < MAPHEIGHT; j++) {
                 TiledMapTileLayer.Cell cell = groudLayer.getCell(i, j);
-                if(cell.getTile().getProperties().get("DOOR")!=null) {
+                if(cell!=null&&cell.getTile().getProperties().get("DOOR")!=null) {
                     doors.put(new Vector2(i,j),new Door(((String) cell.getTile().getProperties().get("OPEN")).equals("1"),
                             Integer.parseInt((String)cell.getTile().getProperties().get("DIRECTION")),((String) cell.getTile().getProperties().get("OPEN")).equals("-1")));
                 }

@@ -5,10 +5,10 @@
    <image width="32" height="32" source="vent/vent_floor-01.png"/>
   </tile>
   <tile id="1">
-   <image width="32" height="32" source="gittertexture/blue_gitter_seethrough_rough-01.png"/>
+   <image width="32" height="32" source="gittertexture/blue_gitter_seethrough_rough-01.png"/>
   </tile>
   <tile id="2">
-   <image width="32" height="32" source="gittertexture/blue_gitter_seethrough-01.png"/>
+   <image width="32" height="32" source="gittertexture/blue_gitter_seethrough-01.png"/>
   </tile>
   <tile id="3">
    <image width="32" height="32" source="Floor/blue_floortile_withbuttons_shadow-01.png"/>
