@@ -407,12 +407,81 @@ public class GameScreen implements Screen {
         player.worldPosition=new Vector2(63*32,16*32);
         
         //Creeps
-        creeps.add(new Creep(this, new Vector2(55*32,16*32)));
-        creeps.get(0).path.add(new Vector2(55*32,21*32));
-        creeps.get(0).path.add(new Vector2(60*32,20*32));
-        creeps.add(new Creep(this, new Vector2(38*32,11*32)));
-        creeps.get(1).path.add(new Vector2(38*32,11*32));
-        creeps.get(1).path.add(new Vector2(41*32,13*32));
+        creeps.add(new Creep(this, new Vector2(55*32,15*32)));
+        creeps.get(0).path.add(new Vector2(55*32,20*32));
+        creeps.get(0).path.add(new Vector2(60*32,19*32));
+        creeps.add(new Creep(this, new Vector2(38*32,28*32)));
+        creeps.get(1).path.add(new Vector2(38*32,28*32));
+        creeps.get(1).path.add(new Vector2(41*32,26*32));
+        //Big cage
+        creeps.add(new Creep(this, new Vector2(12*32,35*32)));
+        creeps.get(2).path.add(new Vector2(18*32,35*32));
+        creeps.get(2).path.add(new Vector2(18*32,29*32));
+        creeps.add(new Creep(this, new Vector2(12*31,35*32)));
+        creeps.get(3).path.add(new Vector2(18*32,34*32));
+        creeps.get(3).path.add(new Vector2(26*32,33*32));
+        creeps.add(new Creep(this, new Vector2(12*31,35*32)));
+        creeps.get(4).path.add(new Vector2(18*32,34*32));
+        creeps.get(4).path.add(new Vector2(17*32,29*32));
+        creeps.get(4).path.add(new Vector2(13*32,29*32));
+        creeps.get(4).path.add(new Vector2(17*32,29*32));
+        //Centralroom
+        creeps.add(new Creep(this, new Vector2(27*32,24*32)));
+        creeps.get(5).path.add(new Vector2(24*32,24*32));
+        creeps.get(5).path.add(new Vector2(19*32,23*32));
+        creeps.add(new Creep(this, new Vector2(27*32,20*32)));
+        creeps.get(6).path.add(new Vector2(23*32,19*32));
+        creeps.get(6).path.add(new Vector2(19*32,20*32));
+        creeps.add(new Creep(this, new Vector2(27*32,20*32)));
+        creeps.get(7).path.add(new Vector2(22*32,19*32));
+        creeps.get(7).path.add(new Vector2(20*32,24*32));
+        creeps.add(new Creep(this, new Vector2(27*32,20*32)));
+        creeps.get(8).path.add(new Vector2(24*32,14*32));
+        creeps.get(8).path.add(new Vector2(20*32,24*32));
+        //Minicages
+        creeps.add(new Creep(this, new Vector2(5*32,22*32)));
+        creeps.get(9).path.add(new Vector2(5*32,23*32));
+        creeps.get(9).path.add(new Vector2(4*32,22*32));
+        creeps.add(new Creep(this, new Vector2(5*32,19*32)));
+        creeps.get(10).path.add(new Vector2(5*32,20*32));
+        creeps.get(10).path.add(new Vector2(4*32,19*32));
+        creeps.add(new Creep(this, new Vector2(14*32,22*32)));
+        creeps.get(11).path.add(new Vector2(14*32,23*32));
+        creeps.get(11).path.add(new Vector2(15*32,22*32));
+        creeps.add(new Creep(this, new Vector2(14*32,19*32)));
+        creeps.get(12).path.add(new Vector2(14*32,20*32));
+        creeps.get(12).path.add(new Vector2(15*32,19*32));
+        //Ballsroom
+        creeps.add(new Creep(this, new Vector2(19*32,9*10)));
+        creeps.get(13).path.add(new Vector2(18*32,8*32));
+        creeps.get(13).path.add(new Vector2(19*32,8*32));
+        //Doorroom
+        creeps.add(new Creep(this, new Vector2(31*32,19*10)));
+        creeps.get(14).path.add(new Vector2(31*32,8*32));
+        creeps.get(14).path.add(new Vector2(30*32,9*32));
+        creeps.add(new Creep(this, new Vector2(25*32,5*10)));
+        creeps.get(15).path.add(new Vector2(26*32,6*32));
+        creeps.get(15).path.add(new Vector2(25*32,5*32));
+        //Alienroom
+        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.get(16).path.add(new Vector2(26*32,14*32));
+        creeps.get(16).path.add(new Vector2(35*32,14*32));
+        creeps.get(16).path.add(new Vector2(35*32,6*32));
+        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.get(17).path.add(new Vector2(41*32,6*32));
+        creeps.get(17).path.add(new Vector2(47*32,6*32));
+        creeps.get(17).path.add(new Vector2(48*32,9*32));
+        creeps.get(17).path.add(new Vector2(42*32,9*32));
+        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.get(18).path.add(new Vector2(27*32,13*32));
+        creeps.get(18).path.add(new Vector2(43*32,14*32));
+        creeps.add(new Creep(this, new Vector2(41*32,12*10)));
+        creeps.get(19).path.add(new Vector2(35*32,13*32));
+        creeps.get(19).path.add(new Vector2(35*32,3*32));
+        //Vents
+        creeps.add(new Creep(this, new Vector2(31*32,23*10)));
+        creeps.get(20).path.add(new Vector2(31*32,25*32));
+        creeps.get(20).path.add(new Vector2(31*32,21*32));
         
         //Consumables
         healthpacks.add(new Healthpack(this, new Vector2(8*32,7*32)));
@@ -421,7 +490,6 @@ public class GameScreen implements Screen {
         lightpacks.add(new Lightpack(this, new Vector2(33*32,19*32)));
         lightpacks.add(new Lightpack(this, new Vector2(17*32,8*32)));
         lightpacks.add(new Lightpack(this, new Vector2(5*32,36*32+10)));
-        lightpacks.add(new Lightpack(this, new Vector2(56*32,8*32+10)));
 
         //Fog of War
         Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
