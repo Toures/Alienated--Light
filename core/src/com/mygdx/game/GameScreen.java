@@ -41,6 +41,7 @@ public class GameScreen implements Screen {
 	private List<Healthpack> healthpacks = new ArrayList<Healthpack>();
 	private List<Lightpack> lightpacks = new ArrayList<Lightpack>();
 	private List<Light> lights = new ArrayList<Light>();
+	private List<Trigger> triggers = new ArrayList<Trigger>();
 	protected Player player;
 	//Pixmaps
 	private Texture fowtexture;
@@ -70,6 +71,7 @@ public class GameScreen implements Screen {
 		batch = new SpriteBatch();
 		fow = new SpriteBatch();
 		
+		//Setup camera and map
 		camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
         camera.update();
@@ -77,6 +79,7 @@ public class GameScreen implements Screen {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
 		player = new Player(this);
 
+		//Setup Aliens
 		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
 		creeps.get(0).path.add(new Vector2(25*32,13*32));
 		creeps.get(0).path.add(new Vector2(13*32,13*32));
@@ -100,6 +103,7 @@ public class GameScreen implements Screen {
         pixmap.setBlending(Blending.SourceOver);
         pixmap.dispose();
         
+        //Increased vision in Fog of War (e.g. because of nearby light)
         pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
         pixmap.setBlending(Blending.None);
         pixmap.setColor( 0, 0, 0, 1 );
@@ -169,11 +173,16 @@ public class GameScreen implements Screen {
 		int speedFactor = 1;
 		float oldy= player.ySpeed;
         player.ySpeed=0;
-		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && player.energy > 5) {
+		if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) &&
+			(Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
+			Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
+			Gdx.input.isKeyPressed(Input.Keys.UP) ||
+			Gdx.input.isKeyPressed(Input.Keys.DOWN)) &&
+			player.energy > 5) {
 			speedFactor = 3;
 			player.energy -= 20*dt;
 		} else
-			player.energy = Math.min(player.energy + 8*dt, 100);
+			player.energy = Math.min(player.energy + 10*dt, 100);
 		
 		//Controls x-Axis
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.xSpeed < player.runspeed*speedFactor) {
@@ -250,6 +259,7 @@ public class GameScreen implements Screen {
 			}
 		}
 		
+		//Update-calls
 		for(Creep creep : creeps) {
 			if(!creep.blinded)
 				creep.update(dt);
@@ -260,8 +270,10 @@ public class GameScreen implements Screen {
 		for(Lightpack lightpack : lightpacks) {
 			lightpack.update(dt);
 		}
-		camera.update();
-
+		
+		for(Trigger trigger : triggers) {
+			trigger.update(dt);
+		}
 
 	}
 
@@ -301,11 +313,11 @@ public class GameScreen implements Screen {
 			if(light.active) {
 				light.draw(batch);
 				batch.draw(lighttexture, light.worldPosition.x-100+light.getWidth()/2, light.worldPosition.y-100+light.getHeight()/2);
-				if(light.lifetime > 9) {
+				if(light.lifetime > 5) {
 					batch.draw(lighttexture, light.worldPosition.x-100+light.getWidth()/2, light.worldPosition.y-100+light.getHeight()/2);
 					batch.draw(lighttexture, light.worldPosition.x-150+light.getWidth()/2, light.worldPosition.y-150+light.getHeight()/2,300,300);
 				}
-				if(light.lifetime > 8) {
+				if(light.lifetime > 4) {
 					batch.draw(lighttexture, light.worldPosition.x-100+light.getWidth()/2, light.worldPosition.y-100+light.getHeight()/2);
 				}
 			}
@@ -377,7 +389,12 @@ public class GameScreen implements Screen {
 		
 		fow.begin();
 		font.draw(fow, "Lightpacks: " + player.lightpacks +"/5", 20, 85);
+		font.draw(fow, "Position:  " + (int)player.worldPosition.x/32 + "/" + (int)player.worldPosition.y/32, 700, 20);
 		fow.end();
+	}
+	
+	public void triggerEvent(int triggerID) {
+		
 	}
 
 	@Override
