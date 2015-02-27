@@ -36,7 +36,7 @@ public class GameScreen implements Screen {
 	private static final String SOLID = "Solid";
 	public static final int TILESIZE = 32;
     private static final int DOOR_COOLDOWN = 1;
-    private Game parent;
+    private Meteorstorm parent;
     private SpriteBatch batch;
     private SpriteBatch fow;
     private Texture fowtexture;
@@ -66,47 +66,9 @@ public class GameScreen implements Screen {
 		return w;
 	}
 
-	public GameScreen(Game parent){
+	public GameScreen(Meteorstorm parent){
         this.parent=parent;
-		font = new BitmapFont();
-		w = Gdx.graphics.getWidth();
-		h = Gdx.graphics.getHeight();
 
-		batch = new SpriteBatch();
-		fow = new SpriteBatch();
-		
-		camera = new OrthographicCamera();
-        camera.setToOrtho(false,w,h);
-        camera.update();
-        tiledMap =new MyMap("Map3.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
-		player = new Player(this);
-
-		creeps.add(new Creep(this, new Vector2(15*32,12*32)));
-		creeps.get(0).path.add(new Vector2(25*32,13*32));
-		creeps.get(0).path.add(new Vector2(13*32,13*32));
-		
-		//Consumables
-		healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
-		lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
-		
-		Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
-        pixmap.setBlending(Blending.None);
-        pixmap.setColor( 0, 0, 0, 1 );
-        pixmap.fill();
-        pixmap.setColor(0, 0, 0, 0.6f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 160);
-        pixmap.setColor(0, 0, 0, 0.3f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 120);
-        pixmap.setColor(0, 0, 0, 0f);
-        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
-        fowtexture = new Texture(pixmap);
-        pixmap.setBlending(Blending.SourceOver);
-        pixmap.dispose();
-		
-		//music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
-		//crash = Gdx.audio.newSound(Gdx.files.internal("crash.ogg"));
-		//music.loop(0.3f);
 	}
 
 	@Override
@@ -121,7 +83,10 @@ public class GameScreen implements Screen {
 		
 		doorTimer+=dt;
 
-		//TODO if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+		 if(Gdx.input.isKeyPressed(Input.Keys.R)){
+             parent.setScreen(parent.pause);
+             return;
+         }
 		
 		/* ------------------ */
 		/* ----- Player ----- */
@@ -204,7 +169,9 @@ public class GameScreen implements Screen {
 			lightpack.update(dt);
 		}
 		camera.update();
-
+        if (!player.alive) {
+            parent.setScreen(parent.gameover);
+        }
 
 	}
 
@@ -304,6 +271,42 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
+        font = new BitmapFont();
+        w = Gdx.graphics.getWidth();
+        h = Gdx.graphics.getHeight();
+
+        batch = new SpriteBatch();
+        fow = new SpriteBatch();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false,w,h);
+        camera.update();
+        tiledMap =new MyMap("Map3.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap.map);
+        player = new Player(this);
+
+        creeps.add(new Creep(this, new Vector2(15*32,12*32)));
+        creeps.get(0).path.add(new Vector2(25*32,13*32));
+        creeps.get(0).path.add(new Vector2(13*32,13*32));
+
+        //Consumables
+        healthpacks.add(new Healthpack(this, new Vector2(4*32,7*32)));
+        lightpacks.add(new Lightpack(this, new Vector2(8*32,7*32)));
+
+        Pixmap pixmap = new Pixmap((int) w,(int) h, Format.RGBA8888 );
+        pixmap.setBlending(Blending.None);
+        pixmap.setColor( 0, 0, 0, 1 );
+        pixmap.fill();
+        pixmap.setColor(0, 0, 0, 0.6f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 160);
+        pixmap.setColor(0, 0, 0, 0.3f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 120);
+        pixmap.setColor(0, 0, 0, 0f);
+        pixmap.fillCircle( (int)(w/2+player.getWidth()/2), (int)(h/2-player.getHeight()/2), 80);
+        fowtexture = new Texture(pixmap);
+        pixmap.setBlending(Blending.SourceOver);
+        pixmap.dispose();
+
         music = Gdx.audio.newSound(Gdx.files.internal("music.mp3"));
         music.loop();
 
