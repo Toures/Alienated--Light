@@ -1,4 +1,4 @@
-# Alienated--Light
+# Alienated: Light
 96h Gamejam: hs-mannheim.de
 
 Verlassen auf einer Raumstation muss man vor seinen Jägern entkommen. 
